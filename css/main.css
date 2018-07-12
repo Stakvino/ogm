@@ -1,0 +1,130 @@
+button
+{
+  padding: .4em .2em;
+  display: inline-block;
+}
+button:hover
+{
+  cursor: pointer;
+}
+button:focus
+{
+
+}
+.fa-plus
+{
+  font-size: .8vw;
+}
+.not-selectable-text
+{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+   user-select: none;
+}
+.space-filler
+{
+  flex: 1;
+  border-bottom: black solid 1px;
+}
+.show
+{
+  display: block;
+}
+.hide
+{
+  display: none;
+}
+div.main-window
+{
+  width: 1200px;
+  height: 550px;
+  margin: 1em auto;
+}
+div.tab-selectors
+{
+  display: flex;
+}
+div.tab-selector
+{
+  width: 150px;
+  padding: .5em 0;
+  text-align: center;
+  font-size: 1.15vw;
+  border-bottom: black solid 1px;
+  color: #555555;
+}
+div.tab-selector:hover
+{
+  cursor: pointer;
+}
+div.selected-tab
+{
+  border-top   : black solid 1px;
+  border-right : black solid 1px;
+  border-left  : black solid 1px;
+  border-bottom: none;
+  color: #3c91d1;
+}
+div.selected-block
+{
+  
+}
+div.edit-blocks
+{
+  border-right : black solid 1px;
+  border-left  : black solid 1px;
+  border-bottom: black solid 1px;
+  height: 100%;
+  width: 100%;
+}
+div.edit-block
+{
+  height: 100%;
+  width: 100%;
+}
+div.Map-block
+{
+}
+div.map-list
+{
+
+    
+}
+div.line-block
+{
+    border-bottom: black solid 1px;
+    margin: 0 0;
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+div.created-maps
+{
+
+}
+button[name="create map"]
+{
+    color: forestgreen;
+    margin-left: 1em;
+}
+div.map-edit
+{
+    border: pink solid 1px;
+    width: 100%;
+    height: 100%;
+}
+button[name="map list"]
+{
+  min-width: 110px;
+  display: inline-flex;
+  justify-content: space-around;
+  align-items: center;
+}
+span.return-arrow
+{
+  font-weight: bold;
+  font-size: 2vw;
+}
