@@ -16,17 +16,34 @@
     <div class="tab-selectors">
       <div class="tab-selector not-selectable-text selected-tab">Map</div>
       <div class="tab-selector not-selectable-text ">Player</div>
+      <div class="tab-selector not-selectable-text ">Actors</div>
       <div class="space-filler"></div>
     </div>
     <div class="edit-blocks">
       <div class="Map-block edit-block show">
         <div class="map-list">
+          <div class="map-info hide">
+              <div>
+                  <label for="map_width">Map width : </label> <input type="text" id="map_width"required><label> px</label>
+                  <label for="map_height">Map height : </label> <input type="text" id="map_height" required><label> px</label>
+              </div>
+              <div>
+                  <label for="grid_width">Grid width : </label> <input type="text" id="grid_width" required><label> px</label>
+                  <label for="grid_height">Grid height : </label> <input type="text" id="grid_height" required><label> px</label>
+              </div>
+              <div class="create-cancel">
+                  <button type="button" name="create" >Create map</button> <button type="button" name="cancel" >Cancel </button>
+              </div>
+              <div class="warning-message"></div>
+          </div>
           <div class="created-maps"></div>
           <div class="line-block"><button type="button" name="create map"><i class="fas fa-plus"></i>Create new map</button></div>
         </div>
         <div class="map-edit hide">
-          <button type="button" name="map list"><i class="fas fa-arrow-left"></i>Map list</button>
-          <canvas id="map-canvas"></canvas>
+          <div class="map-block">
+            <button type="button" name="map list"><i class="fas fa-arrow-left"></i>Map list</button>
+            <div class="canvas-block"></div>
+          </div>
           <div class="map-sprites">
             <button type="button" name="add map sprite"><i class="fas fa-plus"></i>Add new sprite</button>
           </div>
@@ -34,6 +51,9 @@
       </div>
       <div class="Player-block edit-block hide">
         and this is the player block
+      </div>
+      <div class="Actors-block edit-block hide">
+        and this is the actors block
       </div>
     </div>
   </div>

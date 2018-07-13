@@ -2,18 +2,15 @@ button
 {
   padding: .4em .2em;
   display: inline-block;
+    color: #555555;
 }
 button:hover
 {
   cursor: pointer;
 }
-button:focus
-{
-
-}
 .fa-plus
 {
-  font-size: .8vw;
+  font-size: .8em;
 }
 .not-selectable-text
 {
@@ -27,20 +24,22 @@ button:focus
 .space-filler
 {
   flex: 1;
-  border-bottom: black solid 1px;
+  border-bottom: cadetblue solid 1px;
 }
 .show
 {
-  display: block;
+  display: flex;
 }
 .hide
 {
   display: none;
 }
+/****************************************************************************/
+
 div.main-window
 {
   width: 1200px;
-  height: 550px;
+  height: 580px;
   margin: 1em auto;
 }
 div.tab-selectors
@@ -52,9 +51,14 @@ div.tab-selector
   width: 150px;
   padding: .5em 0;
   text-align: center;
-  font-size: 1.15vw;
-  border-bottom: black solid 1px;
+  font-size: 1em;
+  border-bottom: cadetblue solid 1px;
   color: #555555;
+  background-color: lightgray;
+  border-right: cadetblue solid 1px;
+  border-top   : inherit solid 1px;
+  border-right : inherit solid 1px;
+  border-left  : inherit solid 1px;
 }
 div.tab-selector:hover
 {
@@ -62,21 +66,27 @@ div.tab-selector:hover
 }
 div.selected-tab
 {
-  border-top   : black solid 1px;
-  border-right : black solid 1px;
-  border-left  : black solid 1px;
+  border-top   : cadetblue solid 1px;
+  border-right : cadetblue solid 1px;
+  border-left  : cadetblue solid 1px;
   border-bottom: none;
   color: #3c91d1;
+    background-color: lightblue;
+    
+    transition: background-color 1s;
 }
+
+/****************************************************************************/
+
 div.selected-block
 {
   
 }
 div.edit-blocks
 {
-  border-right : black solid 1px;
-  border-left  : black solid 1px;
-  border-bottom: black solid 1px;
+  border-right : cadetblue solid 1px;
+  border-left  : cadetblue solid 1px;
+  border-bottom: cadetblue solid 1px;
   height: 100%;
   width: 100%;
 }
@@ -84,20 +94,25 @@ div.edit-block
 {
   height: 100%;
   width: 100%;
+  background-color: lightslategray;
 }
+
+/****************************************************************************/
+
 div.Map-block
 {
+    flex-direction: column;
+    position: relative;
 }
 div.map-list
 {
-
     
 }
 div.line-block
-{
+{   
     border-bottom: black solid 1px;
-    margin: 0 0;
     height: 100px;
+    flex: 1;
     display: flex;
     align-items: center;
 }
@@ -110,21 +125,114 @@ button[name="create map"]
     color: forestgreen;
     margin-left: 1em;
 }
+
+/****************************************************************************/
+
+div.map-info
+{
+    position: absolute;
+    top: 50px;
+    left: 300px;
+    background-color: lightgray;
+    color: darkslategray;
+    width: 550px;
+    height: 400px;
+    flex-direction: column;
+    border: black solid 1px;
+}
+div.map-info div:not(.warning-message)
+{
+    margin-top: 4em;
+}
+div.map-info label[for]
+{
+    margin-left: 3em;
+}
+div.map-info input
+{
+    width: 60px;
+    text-align: center;
+}
+div.map-info div.create-cancel
+{
+    display: flex;
+    justify-content: center;
+}
+div.map-info button
+{
+    width: 120px;
+}
+div.map-info button[name="create"]
+{
+    margin-right: 4em;
+}
+div.warning-message
+{
+    margin-top: 2em;
+    color: red;
+    font-size: 1em;
+    text-align: center;
+    font-family: sans-serif;
+}
+/****************************************************************************/
+
 div.map-edit
 {
-    border: pink solid 1px;
     width: 100%;
     height: 100%;
+    flex-direction: row;
 }
+div.map-block
+{
+    display: flex;
+    flex-direction: column;
+    width: 1000px;
+    height: 100%;
+}
+div.canvas-block
+{
+    border: black solid 1px;
+    margin: 1em auto;
+    width: 800px;
+    height: 500px;
+    overflow: scroll;
+}
+canvas
+{
+    border-right: black solid 1px;
+    border-bottom: black solid 1px;
+    background-color: white;
+}
+div.map-edit *
+{
+    
+}
+
+/****************************************************************************/
+
 button[name="map list"]
 {
-  min-width: 110px;
+  max-width: 110px;
   display: inline-flex;
   justify-content: space-around;
   align-items: center;
+  margin: 1em;
 }
 span.return-arrow
 {
   font-weight: bold;
-  font-size: 2vw;
+  font-size: 2em;
+}
+div.map-sprites
+{
+    width: 199px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    border: red solid 1px;
+}
+button[name="add map sprite"]
+{
+    margin: 1em 0;
+    height: 45px;
 }
