@@ -180,28 +180,28 @@ div.map-edit
 {
     width: 100%;
     height: 100%;
-    flex-direction: row;
+    justify-content: space-between;
 }
 div.map-block
 {
     display: flex;
     flex-direction: column;
-    width: 1000px;
+    width: 1500px;
     height: 100%;
 }
 div.canvas-block
 {
-    border: black solid 1px;
     margin: 1em auto;
     width: 800px;
-    height: 500px;
+    height: 600px;
     overflow: scroll;
+    border: black solid 1px;
 }
-canvas
+canvas.map-canvas
 {
-    border-right: black solid 1px;
-    border-bottom: black solid 1px;
     background-color: white;
+    margin-right: 2em;
+    margin-bottom: 2em;
 }
 div.map-edit *
 {
@@ -225,14 +225,41 @@ span.return-arrow
 }
 div.map-sprites
 {
-    width: 199px;
-    height: 100%;
+    min-width: 120px;
+    padding: 0 20px;
     display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    border: black solid 1px;
+    overflow-y: scroll;
+}
+div.sprite-block
+{
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-    border: red solid 1px;
+    align-items: center;
+    min-width: 120px;
+    min-height: 120px;
+    margin: 1em 0;
+    border-bottom: black solid 1px; 
+}
+div.sprite-block:hover
+{
+    background-color: darkblue;
+    color: white;
+}
+div.sprite-block label
+{
+    margin-top: 1em;
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
 }
 button[name="add map sprite"]
 {
     margin: 1em 0;
-    height: 45px;
+    min-height: 40px;
+    min-width: 110px;
 }

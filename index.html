@@ -24,12 +24,12 @@
         <div class="map-list">
           <div class="map-info hide">
               <div>
-                  <label for="map_width">Map width : </label> <input type="text" id="map_width"required><label> px</label>
-                  <label for="map_height">Map height : </label> <input type="text" id="map_height" required><label> px</label>
+                  <label for="map_width">Map width : </label> <input type="text" id="map_width" value="600" required><label> px</label>
+                  <label for="map_height">Map height : </label> <input type="text" id="map_height" value="400" required><label> px</label>
               </div>
               <div>
-                  <label for="grid_width">Grid width : </label> <input type="text" id="grid_width" required><label> px</label>
-                  <label for="grid_height">Grid height : </label> <input type="text" id="grid_height" required><label> px</label>
+                  <label for="grid_width">Grid width : </label> <input type="text" id="grid_width" value="20" required><label> px</label>
+                  <label for="grid_height">Grid height : </label> <input type="text" id="grid_height" value="20" required><label> px</label>
               </div>
               <div class="create-cancel">
                   <button type="button" name="create" >Create map</button> <button type="button" name="cancel" >Cancel </button>
@@ -45,7 +45,9 @@
             <div class="canvas-block"></div>
           </div>
           <div class="map-sprites">
-            <button type="button" name="add map sprite"><i class="fas fa-plus"></i>Add new sprite</button>
+            <div class="sprite-block"> <img src="img/background/grass.png" width="40" height="40" > <label class="not-selectable-text">grassqsdfsgdfg.png</label> </div>
+            <button type="button" name="add map sprite" onclick="document.getElementById('load_map_sprite').click()">Add sprite</button>
+            <input type="file" id="load_map_sprite" class="hide" multiple>
           </div>
         </div>
       </div>
@@ -58,6 +60,8 @@
     </div>
   </div>
 
+<script src="js/helper.js"></script>
+<script src="js/canvas.js"></script>
 <script src="js/app.js"></script>
 </body>
 

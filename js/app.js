@@ -1,8 +1,12 @@
 const tabSelectors   = document.querySelector("div.tab-selectors");
 const editBlocks     = document.querySelector("div.edit-blocks");
 const messageWarning = document.querySelector("div.warning-message");
+const canvasBlock = document.querySelector("div.canvas-block");
+const mapSprites = document.querySelector("div.map-sprites");
+const addSprite  = document.querySelector(`button[name="add map sprite"]`);
+const dimensionsInput = Array.from( document.querySelectorAll(`div.map-info input[type="text"]`) );
 
-function showAndHide({showElement, hideElement}){
+DOM.showAndHide = function({showElement, hideElement}){
     if(showElement !== undefined){
         showElement.classList.remove("hide");
         showElement.classList.add("show");
@@ -13,12 +17,18 @@ function showAndHide({showElement, hideElement}){
     }
 }
 
-function createElement(tag, properties){
+DOM.createElement = function(tag, properties){
     const element = document.createElement(tag);
     for(let proprety in properties){
         element[proprety] = properties[proprety];
     }
     return element;
+}
+
+DOM.appendChildren = function(parent, children){
+    for(let child of children){
+        parent.appendChild(child);
+    }
 }
 
 //switching tabs event handler
@@ -53,13 +63,13 @@ document.querySelectorAll("button").forEach( (button) => {
   });
 });
 
-const dimensionsInput = Array.from( document.querySelectorAll(`div.map-info input[type="text"]`) );
+
 //clicking on create new map button will show the edit map block
 document.querySelector(`button[name="create map"]`).addEventListener("click",() => {
-    dimensionsInput.forEach( dimensionInput => dimensionInput.value = "" );
+    //dimensionsInput.forEach( dimensionInput => dimensionInput.value = "" );
     messageWarning.textContent = "";
     const mapInfo = document.querySelector("div.map-info");
-    showAndHide({showElement : mapInfo});
+    DOM.showAndHide({showElement : mapInfo});
 });
 
 
@@ -74,7 +84,8 @@ for(let dimensionInput of dimensionsInput){
     });
 }
 
-const canvasBlock = document.querySelector("div.canvas-block");
+//clicking on create new map button will load map-info window
+let mapCanvas = null;
 document.querySelector(`div.map-info button[name="create"]`).addEventListener("click",() => {
     //canvas dimension smaller then 20 or greater then 20000 or empty
     const canvasDimensions = Array.from( document.querySelectorAll(`div.map-info div`)[0].querySelectorAll("input") ).map(e => e.value);
@@ -97,26 +108,55 @@ document.querySelector(`div.map-info button[name="create"]`).addEventListener("c
         canvasBlock.removeChild(canvasBlock.firstChild);
     }
     //create and append new map canvas
-    const canvas = createElement("canvas", {width : canvasDimensions[0], height : canvasDimensions[1]});
-    canvasBlock.appendChild(canvas);
+    const canvasWidth  = Number(canvasDimensions[0]);
+    const canvasHeight = Number(canvasDimensions[1]);
+    const gridWidth  = Number(gridDimensions[0]);
+    const gridHeight = Number(gridDimensions[1]);
+    mapCanvas = new Canvas(canvasWidth, canvasHeight, gridWidth, gridHeight);
+    canvasBlock.appendChild(mapCanvas.DOMCanvas);
+    mapCanvas.DOMCanvas.classList.add("map-canvas");
+    mapCanvas.drawGridLines();
+    
+    const oldSprites = mapSprites.querySelectorAll("div");
+    if(oldSprites.length){
+        for(let i = 0; i < oldSprites.length; i++){
+            mapSprites.removeChild(oldSprites[i]);
+        }
+    }
     
     const mapList = document.querySelector("div.map-list");
-    showAndHide({hideElement : mapList});
+    DOM.showAndHide({hideElement : mapList});
     
     const mapEdit = document.querySelector("div.map-edit");
     const mapInfo = document.querySelector("div.map-info");
-    showAndHide({showElement : mapEdit, hideElement : mapInfo});
+    DOM.showAndHide({showElement : mapEdit, hideElement : mapInfo});
 });
 
 //clicking on the cancel button on the map-info windo will just hide this window
 document.querySelector(`div.map-info button[name="cancel"]`).addEventListener("click",() => {
     const mapInfo = document.querySelector("div.map-info");
-    showAndHide({hideElement : mapInfo});
+    DOM.showAndHide({hideElement : mapInfo});
 });
 
 //clicking on the map list button will get you back to the map list block
 document.querySelector(`button[name="map list"]`).addEventListener("click",() => {
     const mapList = document.querySelector("div.map-list");
     const mapEdit = document.querySelector("div.map-edit");
-    showAndHide({showElement : mapList, hideElement : mapEdit});
+    DOM.showAndHide({showElement : mapList, hideElement : mapEdit});
+});
+
+document.getElementById("load_map_sprite").addEventListener("input",function() {
+    const files = this.files;
+    for(let file of files){
+        const path  = "img/background/" + file.name;
+        const div   = DOM.createElement("div", {className : "sprite-block"});
+        const img   = DOM.createElement("img", {src : path, width : 40, height : 40});
+        const label = DOM.createElement("label", {className : "not-selectable-text"});
+        label.textContent = file.name;
+
+        img.addEventListener("load",function(){
+            DOM.appendChildren(div, [img, label]);
+            mapSprites.insertBefore(div, addSprite);
+        }); 
+    }
 });

@@ -30,12 +30,6 @@ function vectorMagnitude(vector){
 //Helpers for DOM manipulation
 const DOM = Object.create(null);
 
-DOM.createImg = function(src){
-  const img = document.createElement("img");
-  img.src = src;
-  return img;
-}
-
 DOM.removeChildren = function(parent){
   const children = Array.from(parent.children);
 
