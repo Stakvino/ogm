@@ -2,7 +2,7 @@ button
 {
   padding: .4em .2em;
   display: inline-block;
-    color: #555555;
+  color: #555555;
 }
 button:hover
 {
@@ -71,17 +71,12 @@ div.selected-tab
   border-left  : cadetblue solid 1px;
   border-bottom: none;
   color: #3c91d1;
-    background-color: lightblue;
-    
-    transition: background-color 1s;
+  background-color: lightblue;
+  transition: background-color 1s;
 }
 
 /****************************************************************************/
 
-div.selected-block
-{
-  
-}
 div.edit-blocks
 {
   border-right : cadetblue solid 1px;
@@ -104,10 +99,6 @@ div.Map-block
     flex-direction: column;
     position: relative;
 }
-div.map-list
-{
-    
-}
 div.line-block
 {   
     border-bottom: black solid 1px;
@@ -115,10 +106,6 @@ div.line-block
     flex: 1;
     display: flex;
     align-items: center;
-}
-div.created-maps
-{
-
 }
 button[name="create map"]
 {
@@ -203,10 +190,6 @@ canvas.map-canvas
     margin-right: 2em;
     margin-bottom: 2em;
 }
-div.map-edit *
-{
-    
-}
 
 /****************************************************************************/
 
@@ -217,6 +200,7 @@ button[name="map list"]
   justify-content: space-around;
   align-items: center;
   margin: 1em;
+  padding-bottom: .6em; 
 }
 span.return-arrow
 {

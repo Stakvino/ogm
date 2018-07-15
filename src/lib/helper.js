@@ -9,21 +9,16 @@ class Vector {
   times(number){
     return new Vector(this.x * number, this.y * number);
   }
-}
+  magnitude(){
+    return Math.sqrt( Math.pow(this.x, 2) +  Math.pow(this.y, 2) );  
+  }
+  angleBetween(vector){
+    const dy = vector.y - this.y;
+    const dx = vector.x - this.x;
 
-function angleBetween(point1, point2){
-  const dy = point2.y - point1.y;
-  const dx = point2.x - point1.x;
-
-  return Math.atan2(dy,dx);
-}
-
-function vectorCord(magnitude, angle){
-  return new Vector(Math.cos(angle) * magnitude, Math.sin(angle) * magnitude);
-}
-
-function vectorMagnitude(vector){
-  return Math.sqrt( Math.pow(vector.x, 2) +  Math.pow(vector.y, 2) );
+    return Math.atan2(dy,dx);
+  }
+    
 }
 
 /******************************************************************************/
@@ -63,3 +58,13 @@ function runAnimation(frameFunc,FPS) {
 
   requestAnimationFrame(frame);
 }
+
+/******************************************************************************/
+
+define(function () {
+    return {
+        Vector : Vector,
+        DOM : DOM,
+        runAnimation : runAnimation
+    }
+});
