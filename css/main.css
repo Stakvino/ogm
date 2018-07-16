@@ -96,99 +96,99 @@ div.edit-block
 
 div.Map-block
 {
-    flex-direction: column;
-    position: relative;
+  flex-direction: column;
+  position: relative;
 }
 div.line-block
 {   
-    border-bottom: black solid 1px;
-    height: 100px;
-    flex: 1;
-    display: flex;
-    align-items: center;
+  border-bottom: black solid 1px;
+  height: 100px;
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 button[name="create map"]
 {
-    color: forestgreen;
-    margin-left: 1em;
+  color: forestgreen;
+  margin-left: 1em;
 }
 
 /****************************************************************************/
 
 div.map-info
 {
-    position: absolute;
-    top: 50px;
-    left: 300px;
-    background-color: lightgray;
-    color: darkslategray;
-    width: 550px;
-    height: 400px;
-    flex-direction: column;
-    border: black solid 1px;
+  position: absolute;
+  top: 50px;
+  left: 300px;
+  background-color: lightgray;
+  color: darkslategray;
+  width: 550px;
+  height: 400px;
+  flex-direction: column;
+  border: black solid 1px;
 }
 div.map-info div:not(.warning-message)
 {
-    margin-top: 4em;
+  margin-top: 4em;
 }
 div.map-info label[for]
 {
-    margin-left: 3em;
+  margin-left: 3em;
 }
 div.map-info input
 {
-    width: 60px;
-    text-align: center;
+  width: 60px;
+  text-align: center;
 }
 div.map-info div.create-cancel
 {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 div.map-info button
 {
-    width: 120px;
+  width: 120px;
 }
 div.map-info button[name="create"]
 {
-    margin-right: 4em;
+  margin-right: 4em;
 }
 div.warning-message
 {
-    margin-top: 2em;
-    color: red;
-    font-size: 1em;
-    text-align: center;
-    font-family: sans-serif;
+  margin-top: 2em;
+  color: red;
+  font-size: 1em;
+  text-align: center;
+  font-family: sans-serif;
 }
 /****************************************************************************/
 
 div.map-edit
 {
-    width: 100%;
-    height: 100%;
-    justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
 }
 div.map-block
 {
-    display: flex;
-    flex-direction: column;
-    width: 1500px;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 1500px;
+  height: 100%;
 }
 div.canvas-block
 {
-    margin: 1em auto;
-    width: 800px;
-    height: 600px;
-    overflow: scroll;
-    border: black solid 1px;
+  margin: 1em auto;
+  width: 800px;
+  height: 600px;
+  overflow: scroll;
+  border: black solid 1px;
 }
 canvas.map-canvas
 {
-    background-color: white;
-    margin-right: 2em;
-    margin-bottom: 2em;
+  background-color: white;
+  margin-right: 2em;
+  margin-bottom: 2em;
 }
 
 /****************************************************************************/
@@ -209,41 +209,41 @@ span.return-arrow
 }
 div.map-sprites
 {
-    min-width: 120px;
-    padding: 0 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: baseline;
-    border: black solid 1px;
-    overflow-y: scroll;
+  min-width: 120px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  border: black solid 1px;
+  overflow-y: scroll;
 }
 div.sprite-block
 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-width: 120px;
-    min-height: 120px;
-    margin: 1em 0;
-    border-bottom: black solid 1px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 120px;
+  min-height: 120px;
+  margin: 1em 0;
+  border-bottom: black solid 1px; 
 }
 div.sprite-block:hover
 {
-    background-color: darkblue;
-    color: white;
+  background-color: darkblue;
+  color: white;
 }
 div.sprite-block label
 {
-    margin-top: 1em;
-    width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
+  margin-top: 1em;
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 button[name="add map sprite"]
 {
-    margin: 1em 0;
-    min-height: 40px;
-    min-width: 110px;
+  margin: 1em 0;
+  min-height: 40px;
+  min-width: 110px;
 }
