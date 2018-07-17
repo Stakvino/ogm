@@ -18,6 +18,10 @@ class Vector {
 
     return Math.atan2(dy,dx);
   }
+  isInsideRect(position, size){
+    return this.x > position.x && this.x < position.x + size.x
+        && this.y > position.y && this.y < position.y + size.y;
+  }
     
 }
 

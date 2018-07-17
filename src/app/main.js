@@ -1,3 +1,6 @@
+const mouseLeftButton  = 0;
+const mouseRightButton = 2;
+
 const tabSelectors   = document.querySelector("div.tab-selectors");
 const editBlocks     = document.querySelector("div.edit-blocks");
 const messageWarning = document.querySelector("div.warning-message");
@@ -89,6 +92,7 @@ define(function (require) {
 
   //clicking on create new map button will load map-info window
   let mapCanvas = null;
+  let canvasSize = null;
   document.querySelector(`div.map-info button[name="create"]`).addEventListener("click",() => {
     //canvas dimension smaller then 20 or greater then 20000 or empty
     const canvasDimensions = Array.from( document.querySelectorAll(`div.map-info div`)[0].querySelectorAll("input") ).map(e => e.value);
@@ -117,6 +121,7 @@ define(function (require) {
     const gridHeight = Number(gridDimensions[1]);
     mapCanvas = new Canvas(canvasWidth, canvasHeight, gridWidth, gridHeight);
     canvasBlock.appendChild(mapCanvas.DOMCanvas);
+    canvasSize = new Vector(mapCanvas.width, mapCanvas.height);
     mapCanvas.DOMCanvas.classList.add("map-canvas");
     mapCanvas.drawGridLines();
 
@@ -148,34 +153,64 @@ define(function (require) {
     DOM.showAndHide({showElement : mapList, hideElement : mapEdit});
   });
   
-  const canvasBounding =  mapCanvas.DOMCanvas.getBoundingClientRect();
   document.getElementById("load_map_sprite").addEventListener("input",function() {
     const files = this.files;
+    //Create a sprite-block for each selected img from the background folder and add them to the list
     for(let file of files){
       const path  = "img/background/" + file.name;
       const div   = DOM.createElement("div", {className : "sprite-block"});
       const img   = DOM.createElement("img", {src : path, width : 40, height : 40});
       const label = DOM.createElement("label", {className : "not-selectable-text"});
       label.textContent = file.name;
+      let isInsideCanvas = false;
+      let gridPosition = null;
       
-      div.addEventListener("click",function(e){
+      //Attach event handler to be able to drag the sprite when added to the list
+      div.addEventListener("mouseup",function(e){
         const dragedImg = DOM.createElement("img", {src : path, width : mapCanvas.gridWidth, height : mapCanvas.gridHeight});
         document.body.appendChild(dragedImg);
         dragedImg.style.position = "absolute";
         dragedImg.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
         dragedImg.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
-        addEventListener("mousemove",function(e){
-          //console.log(e);
-          dragedImg.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
-          dragedImg.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
-        });
-        addEventListener("click",function(e){
-          const canvasLeft = canvasBounding.left + window.scrollX;
-          const canvasTop  = canvasBounding.top + window.scrollY;
-          const mouseLeft  = e.pageX - mapCanvas.gridWidth/2;
-          const mouseTop   = e.pageY - mapCanvas.gridHeight/2;
-          
-          });
+        //Event hundler that makes the sprite img follow the mouse position
+        function dragSprite(e){
+          const canvasBounding = mapCanvas.DOMCanvas.getBoundingClientRect();
+          const canvasPosition = new Vector(canvasBounding.left + window.scrollX , canvasBounding.top + window.scrollY);
+          const mousePosition = new Vector(e.pageX, e.pageY);
+
+          if( mousePosition.isInsideRect(canvasPosition, canvasSize) ){
+            const positionInCanvas = new Vector(e.pageX - canvasPosition.x, e.pageY - canvasPosition.y);
+            gridPosition = new Vector(Math.floor(positionInCanvas.x/mapCanvas.gridWidth), Math.floor(positionInCanvas.y/mapCanvas.gridHeight) );
+            gridPosition = new Vector(gridPosition.x * mapCanvas.gridWidth, gridPosition.y * mapCanvas.gridHeight);
+
+            dragedImg.style.left = `${canvasPosition.x + gridPosition.x}px`;
+            dragedImg.style.top  = `${canvasPosition.y + gridPosition.y}px`;
+            isInsideCanvas = true;
+          }else{
+            dragedImg.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
+            dragedImg.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
+            isInsideCanvas = false;
+          }
+        }
+        addEventListener("mousemove", dragSprite);
+        
+        //Handle the mouse click if you are dragging a sprite
+        function placeSprite(e){
+          if(isInsideCanvas){
+            
+          }
+        }
+        addEventListener("mousedown", placeSprite);
+        
+        function cancelDrag(e){
+          if(e.key === "Escape"){
+            document.body.removeChild(dragedImg);
+            removeEventListener("mousemove", dragSprite);
+            removeEventListener("mousedown", placeSprite);
+            removeEventListener("keydown", cancelDrag);
+          }
+        }
+        addEventListener("keydown", cancelDrag);
       });
       
       img.addEventListener("load",function(){

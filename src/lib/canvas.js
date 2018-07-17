@@ -3,12 +3,12 @@ define(function (require) {
     
     class Canvas {
       constructor(width = 400, height = 400, gridWidth = 40, gridHeight = 40) {
-        this.DOMCanvas = DOM.createElement("canvas", {width, height});
-        this.gridsNumber = new Vector( Math.floor(width/gridWidth), Math.floor(height/gridHeight) );
-        this.width  = width + (this.gridsNumber.x*2);
-        this.height = height + (this.gridsNumber.y*2);
+        this.width  = width;
+        this.height = height;
         this.gridWidth  = gridWidth;
         this.gridHeight = gridHeight;
+        this.gridsNumber = new Vector( Math.floor(width/gridWidth), Math.floor(height/gridHeight) );
+        this.DOMCanvas = DOM.createElement("canvas", {width : this.width, height : this.height});
         this.ctx = this.DOMCanvas.getContext("2d");
       }
     }
