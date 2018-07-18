@@ -37,6 +37,31 @@ DOM.removeChildren = function(parent){
   });
 }
 
+DOM.showAndHide = function({showElement, hideElement}){
+    if(showElement !== undefined){
+      showElement.classList.remove("hide");
+      showElement.classList.add("show");
+    }
+    if(hideElement !== undefined){
+      hideElement.classList.add("hide");
+      hideElement.classList.remove("show");
+    }
+  }
+
+  DOM.createElement = function(tag, properties){
+    const element = document.createElement(tag);
+    for(let proprety in properties){
+      element[proprety] = properties[proprety];
+    }
+    return element;
+  }
+
+  DOM.appendChildren = function(parent, children){
+    for(let child of children){
+      parent.appendChild(child);
+    }
+  }
+  
 /******************************************************************************/
 //Function to control FPS and stop resume callback function in requestAnimationFrame
 function runAnimation(frameFunc,FPS) {
@@ -61,6 +86,16 @@ function runAnimation(frameFunc,FPS) {
   }
 
   requestAnimationFrame(frame);
+}
+
+/******************************************************************************/
+
+function objToArray(obj){
+  const array = [];
+  for(let prop in obj){
+    array.push(obj[prop]);
+  }
+  return array;
 }
 
 /******************************************************************************/

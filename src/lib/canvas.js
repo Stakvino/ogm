@@ -16,7 +16,18 @@ define(function (require) {
     Canvas.prototype.clear = function(){
       this.ctx.clearRect(0,0,this.width,this.height);
     }
-
+    
+    Canvas.prototype.clearGrid = function(gridPosition){
+      this.ctx.clearRect(gridPosition.x,gridPosition.y,this.gridWidth,this.gridHeight);
+    }
+    
+    Canvas.prototype.drawGridLine = function(gridPosition){
+      this.ctx.lineWidth = 2;
+      this.ctx.beginPath();
+      this.ctx.rect(gridPosition.x,gridPosition.y,this.gridWidth,this.gridHeight); 
+      this.ctx.stroke();
+    } 
+    
     Canvas.prototype.drawGridLines = function(){
       this.ctx.lineWidth = 2;
       this.ctx.beginPath();
@@ -29,6 +40,11 @@ define(function (require) {
           this.ctx.lineTo(this.width, i);
       }
       this.ctx.stroke();
+    }
+    
+    Canvas.prototype.drawImage = function(drawArgs){
+      drawArgs = objToArray(drawArgs);
+      this.ctx.drawImage(...drawArgs);
     }
 
     /******************************************************************************/
