@@ -48,10 +48,11 @@ DOM.showAndHide = function({showElement, hideElement}){
     }
   }
 
-  DOM.createElement = function(tag, properties){
+  DOM.createElement = function(tag, attributes){
     const element = document.createElement(tag);
-    for(let proprety in properties){
-      element[proprety] = properties[proprety];
+    for(let attributeName in attributes){
+      const attributeValue = attributes[attributeName];
+      element[attributeName] = attributeValue;
     }
     return element;
   }
@@ -61,7 +62,13 @@ DOM.showAndHide = function({showElement, hideElement}){
       parent.appendChild(child);
     }
   }
-  
+  DOM.getElementByClassName = function(className, context = document){
+    const HtmlCollection = context.getElementsByClassName(className);
+    if(HtmlCollection.length){
+      return HtmlCollection[0];
+    }
+    return undefined;
+  }
 /******************************************************************************/
 //Function to control FPS and stop resume callback function in requestAnimationFrame
 function runAnimation(frameFunc,FPS) {
@@ -89,8 +96,10 @@ function runAnimation(frameFunc,FPS) {
 }
 
 /******************************************************************************/
+//Helpers for array manipulation
+const array = Object.create(null);
 
-function objToArray(obj){
+array.fromObj = function(obj){
   const array = [];
   for(let prop in obj){
     array.push(obj[prop]);
@@ -98,12 +107,25 @@ function objToArray(obj){
   return array;
 }
 
+array.fromHtmlCol = function(HtmlColl){
+  const array = [];
+  for(let prop in HtmlColl){
+    if(prop !== "length"){
+      array.push(HtmlColl[prop]);
+    }
+    else{
+      break;
+    }
+  }
+  return array;
+}
 /******************************************************************************/
 
 define(function () {
     return {
         Vector : Vector,
         DOM : DOM,
+        array : array,
         runAnimation : runAnimation
     }
 });

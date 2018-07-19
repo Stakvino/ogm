@@ -1,6 +1,7 @@
 define(function (require) {
     const DOM = require('helper').DOM;
-    
+    const arrayFromObj = require('helper').array.fromObj;
+
     class Canvas {
       constructor(width = 400, height = 400, gridWidth = 40, gridHeight = 40) {
         this.width  = width;
@@ -43,7 +44,7 @@ define(function (require) {
     }
     
     Canvas.prototype.drawImage = function(drawArgs){
-      drawArgs = objToArray(drawArgs);
+      drawArgs = arrayFromObj(drawArgs);
       this.ctx.drawImage(...drawArgs);
     }
 

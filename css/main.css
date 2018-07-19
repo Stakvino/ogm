@@ -21,11 +21,6 @@ button:hover
   -ms-user-select: none;
    user-select: none;
 }
-.space-filler
-{
-  flex: 1;
-  border-bottom: cadetblue solid 1px;
-}
 .show
 {
   display: flex;
@@ -112,7 +107,7 @@ div.line-block
   display: flex;
   align-items: center;
 }
-button[name="create map"]
+button.create-new-map
 {
   color: forestgreen;
   margin-left: 1em;
@@ -154,7 +149,7 @@ div.map-info button
 {
   width: 120px;
 }
-div.map-info button[name="create"]
+div.map-info button.create-map
 {
   margin-right: 4em;
 }
@@ -223,7 +218,7 @@ canvas.map-canvas
 
 /****************************************************************************/
 
-button[name="map list"]
+button.return-map-list
 {
   max-width: 110px;
   display: inline-flex;
@@ -271,7 +266,7 @@ div.sprite-block label
   text-overflow: ellipsis;
   text-align: center;
 }
-button[name="add map sprite"]
+button.add-map-sprite
 {
   margin: 1em 0;
   min-height: 40px;
