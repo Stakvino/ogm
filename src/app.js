@@ -5,4 +5,4 @@ requirejs.config({
     }
 });
 
-requirejs(['app/main']);
+requirejs(['app/main', `drag-element`]);
