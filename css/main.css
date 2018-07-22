@@ -19,7 +19,12 @@ button:hover
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-   user-select: none;
+  user-select: none;
+}
+.not-dragable
+{
+  -webkit-user-drag: none;
+  user-drag: none;
 }
 .show
 {
@@ -35,6 +40,12 @@ button:hover
   background-color: white;
   background-size: cover;
   background-repeat: no-repeat;
+}
+.ellipsis-text
+{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 /****************************************************************************/
 
@@ -100,10 +111,14 @@ div.Map-block
   flex-direction: column;
   position: relative;
 }
+div.map-list
+{
+  flex-direction: column;
+}
 div.line-block
 {   
   border-bottom: black solid 1px;
-  height: 100px;
+  height: 120px;
   flex: 1;
   display: flex;
   align-items: center;
@@ -112,6 +127,39 @@ button.create-new-map
 {
   color: forestgreen;
   margin-left: 1em;
+}
+div.saved-map
+{
+  justify-content: space-around;
+}
+div.saved-map canvas.map-small
+{
+  border: black solid 1px;
+}
+div.saved-map label.map-name
+{
+  text-align: center;
+  width: 50%;
+  padding: .4em 0 .6em 0;
+  font-size: 1.6em;
+  border-right: black solid 1px;
+  font-family: sans-serif;
+}
+div.saved-map label.map-size
+{
+  text-align: center;
+  width: 15%;
+  font-size: 1.6em;
+  border-right: black solid 1px;
+  padding: .4em 0 .6em 0;
+}
+div.saved-map button.open-map-but
+{
+  width: 80px;
+}
+div.saved-map button.delete-map-but
+{
+  width: 80px;
 }
 
 /****************************************************************************/
@@ -189,6 +237,7 @@ div.canvas-block
 {
   width: 700px;
   overflow: scroll;
+  border: black solid 1px;
 }
 div.map-toolbox
 {
@@ -209,6 +258,10 @@ button.map-tool
   height: 40px;
   margin-bottom: .5em;
   border: white solid 1px;
+}
+button.save-map-but
+{
+  font-size: 1.5em;
 }
 canvas.map-canvas
 {
@@ -273,8 +326,6 @@ div.sprite-block label
 {
   margin-top: 1em;
   width: 100px;
-  overflow: hidden;
-  text-overflow: ellipsis;
   text-align: center;
 }
 button.add-map-sprite

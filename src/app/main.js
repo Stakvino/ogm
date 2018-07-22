@@ -1,6 +1,3 @@
-const mouseLeftButton  = 0;
-const mouseRightButton = 2;
-
 define(function (require) {
   const Canvas = require('canvas').Canvas;
   const DOM = require('helper').DOM;
@@ -28,7 +25,7 @@ define(function (require) {
         currentTab.classList.remove("selected-tab");
 
         //hide the current selected block
-        const currentEditBlock = DOM.getElementByClassName("show", editBlocksContainer);
+        const currentEditBlock = array.fromHtmlCol( editBlocksContainer.children ).filter( e => e.classList.contains("show") )[0];
         DOM.showAndHide({hideElement : currentEditBlock});
 
         //add selected style to the clicked tab

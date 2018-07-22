@@ -30,7 +30,7 @@ class Vector {
 const DOM = Object.create(null);
 
 DOM.removeChildren = function(parent){
-  const children = Array.from(parent.children);
+  const children = array.fromHtmlCol( parent.children );
 
   children.forEach(function(child){
     parent.removeChild(child);
@@ -69,6 +69,29 @@ DOM.showAndHide = function({showElement, hideElement}){
     }
     return undefined;
   }
+
+/******************************************************************************/
+//Helpers for array manipulation
+const array = Object.create(null);
+
+array.fromObj = function(obj){
+  const array = [];
+  for(let prop in obj){
+    array.push(obj[prop]);
+  }
+  return array;
+}
+
+array.fromHtmlCol = function(HtmlColl){
+  const array = [];
+  for(let prop in HtmlColl){
+    const value = HtmlColl[prop];
+    if( value.toString().includes("HTML") && value.toString().includes("Element") ){
+      array.push(value);
+    }
+  }
+  return array;
+}
 /******************************************************************************/
 //Function to control FPS and stop resume callback function in requestAnimationFrame
 function runAnimation(frameFunc,FPS) {
@@ -94,31 +117,18 @@ function runAnimation(frameFunc,FPS) {
 
   requestAnimationFrame(frame);
 }
-
 /******************************************************************************/
-//Helpers for array manipulation
-const array = Object.create(null);
 
-array.fromObj = function(obj){
-  const array = [];
-  for(let prop in obj){
-    array.push(obj[prop]);
-  }
-  return array;
-}
-
-array.fromHtmlCol = function(HtmlColl){
-  const array = [];
-  for(let prop in HtmlColl){
-    if(prop !== "length"){
-      array.push(HtmlColl[prop]);
-    }
-    else{
-      break;
+function debounce(func, delay){
+  let timeout = null;
+  return function(){
+    if(timeout === null){
+      func.apply(null,arguments);
+      timeout = setTimeout( () => timeout = null, delay); 
     }
   }
-  return array;
 }
+
 /******************************************************************************/
 
 define(function () {
@@ -126,6 +136,7 @@ define(function () {
         Vector : Vector,
         DOM : DOM,
         array : array,
-        runAnimation : runAnimation
+        runAnimation : runAnimation,
+        debounce : debounce
     }
 });

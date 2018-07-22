@@ -1,6 +1,7 @@
 define(function (require) {
   const Canvas = require('canvas').Canvas;
   const DOM = require('helper').DOM;
+  const debounce = require('helper').debounce;
   const array = require('helper').array;
   const dragElement  = require(`drag-element`).dragElement;
   const drawElement  = require(`drag-element`).drawElement;
@@ -81,8 +82,8 @@ define(function (require) {
     canvasBlock.appendChild(mapCanvas.DOMCanvas);
     mapCanvas.DOMCanvas.classList.add("map-canvas");
     mapCanvas.drawGridLines();
-
-    const oldSprites = spritesContainer.children;
+    
+    const oldSprites = array.fromHtmlCol( spritesContainer.children );
     if(oldSprites.length){
       for(let i = 0; i < oldSprites.length; i++){
         spritesContainer.removeChild(oldSprites[i]);
@@ -113,7 +114,7 @@ define(function (require) {
     whiteDiv.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
     whiteDiv.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
     
-    const dragCallback   = dragElement(whiteDiv, mapCanvas);
+    const dragCallback   = debounce(dragElement(whiteDiv, mapCanvas), 50);
     const eraseCallback  = eraseElement(mapCanvas);
     const cancelCallback = cancelDrag(whiteDiv, dragCallback, eraseCallback);
 
@@ -143,7 +144,7 @@ define(function (require) {
       const spriteBlock = DOM.createElement("div", {className : "sprite-block"});
       const mapSprite = DOM.createElement("div", {className : "map-sprite"});
       mapSprite.style.backgroundImage = `url(${path})`;
-      const label = DOM.createElement("label", {className : "not-selectable-text"});
+      const label = DOM.createElement("label", {className : "not-selectable-text ellipsis-text"});
       label.textContent = file.name;
       
       //make the sprite block that contains the sprite img and the name
@@ -160,7 +161,7 @@ define(function (require) {
         dragedSprite.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
         
         const img = DOM.createElement("img", {src : path, width : mapCanvas.gridWidth, height : mapCanvas.gridHeight});
-        const dragCallback   = dragElement(dragedSprite, mapCanvas, img);
+        const dragCallback   = debounce(dragElement(dragedSprite, mapCanvas, img), 50);
         const drawCallback   = drawElement(img, mapCanvas);
         const cancelCallback = cancelDrag(dragedSprite, dragCallback, drawCallback);
         

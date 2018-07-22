@@ -36,8 +36,10 @@
               </div>
               <div class="warning-message"></div>
           </div>
-          <div class="created-maps"></div>
           <div class="line-block"><button type="button" class="create-new-map"><i class="fas fa-plus"></i>Create new map</button></div>
+          <div class="created-maps">
+            <div class="line-block saved-map"> <canvas width="100" height="100" class="map-small" ></canvas> <label class="map-name ellipsis-text">magical forest</label> <label class="map-size">5000x5000</label> <button type="button" class="open-map-but">open</button> <button type="button" class="delete-map-but">delete</button> </div>
+          </div>
         </div>
         <div class="map-edit hide">
           <div class="map-block">
@@ -47,12 +49,13 @@
               <div class="map-toolbox">
                 <button class="map-tool clear-map-but" title="clear map"><i class="fas fa-chalkboard"></i></button>
                 <button class="map-tool clear-grid-but" title="clear grid"><i class="far fa-square"></i></button>
+                <button class="map-tool save-map-but" title="save map"><i class="far fa-save"></i></button>
               </div>
             </div>
           </div>
           <div class="map-sprites">
             <div class="sprites-container"></div>
-            <button type="button" class="add-map-sprite" onclick="document.getElementById('load_map_sprite').click()">Add sprite</button>
+            <button type="button" class="add-map-sprite not-selectable-text" onclick="document.getElementById('load_map_sprite').click()">Add sprite</button>
             <input type="file" id="load_map_sprite" class="hide" multiple>
           </div>
         </div>

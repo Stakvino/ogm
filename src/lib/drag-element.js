@@ -3,7 +3,7 @@ define(function (require) {
   const arrayFromObj = require('helper').array.fromObj;
   
   const leftMouseClick = 1;
-  
+
   let isInsideCanvas = false;
   let gridPosition = null;
   //Event hundler that makes the dragged element follow the mouse position
@@ -26,7 +26,7 @@ define(function (require) {
               //user is holding left mouse click in canvas
               if(e.buttons === leftMouseClick){
                 if(img === null){
-                  eraseElement(mapCanvas)();
+                  eraseElement(mapCanvas)(e);
                 }
                 else{
                   drawElement(img, mapCanvas)();
@@ -59,7 +59,8 @@ define(function (require) {
   }
   
   function eraseElement(mapCanvas){
-    return () => {
+    return (e) => {
+      e.preventDefault();
       if(isInsideCanvas){
         mapCanvas.clearGrid(gridPosition);
         mapCanvas.drawGridLine(gridPosition);
