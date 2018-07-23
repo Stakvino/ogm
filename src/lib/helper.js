@@ -74,6 +74,17 @@ DOM.showAndHide = function({showElement, hideElement}){
 //Helpers for array manipulation
 const array = Object.create(null);
 
+array.create = function(numberOfRaws, numberOfCol, value = null){
+  const array = [];
+  for(let i = 0; i < numberOfRaws; i++){
+    array[i] = [];
+    for(let j = 0; j < numberOfCol; j++){
+      array[i][j] = value;
+    }
+  }
+  return array;
+}
+
 array.fromObj = function(obj){
   const array = [];
   for(let prop in obj){
@@ -92,6 +103,61 @@ array.fromHtmlCol = function(HtmlColl){
   }
   return array;
 }
+
+/******************************************************************************/
+
+class Map {
+    constructor(mapArray, mapName = "") {
+      this.array = mapArray;
+      this.rowsNumber = this.array.length;
+      this.columnsNumber = this.array[0].length;
+      this.mapName = mapName;
+    }
+}
+
+Map.prototype.saveInLocal = function(){
+  const savedMaps = JSON.parse( localStorage.getItem("savedMaps") ) || {};
+  savedMaps[this.name] = this.array;
+  console.log(savedMaps);
+  localStorage.setItem("savedMaps", JSON.stringify(savedMaps) );
+}
+
+Map.prototype.save = function(newMap){
+  this.array = newMap;
+  this.saveInLocal();
+}
+
+Map.prototype.setValue = function(x, y, value){
+  this.array[x][y] = value;
+  this.saveInLocal();
+}
+
+Map.prototype.isEmpty = function(){
+  for(let i = 0; i < this.rowsNumber; i++){
+    for(let j = 0; j < this.columnsNumber; j++){
+      if(this.array[i][j] !== "empty"){
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+Map.prototype.isAlreadyInLocal = function(mapName){
+  const name = mapName || this.name;
+  
+  const savedMaps = JSON.parse( localStorage.getItem("savedMaps") ) || {};
+  return savedMaps[name] !== undefined;
+}
+
+Map.prototype.clear = function(){
+  for(let i = 0; i < this.rowsNumber; i++){
+    for(let j = 0; j < this.columnsNumber; j++){
+      this.array[i][j] = "empty";
+    }
+  }
+}
+
 /******************************************************************************/
 //Function to control FPS and stop resume callback function in requestAnimationFrame
 function runAnimation(frameFunc,FPS) {
@@ -136,6 +202,7 @@ define(function () {
         Vector : Vector,
         DOM : DOM,
         array : array,
+        Map : Map,
         runAnimation : runAnimation,
         debounce : debounce
     }

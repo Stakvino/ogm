@@ -43,7 +43,7 @@ define(function (require) {
   }
   
   //Handle the mouse click if you are dragging an element
-  function drawElement(img, mapCanvas){
+  function drawElement(img, mapCanvas, mapArray){
     return () => {
             if(isInsideCanvas){
               const drawArgs = {
@@ -54,16 +54,23 @@ define(function (require) {
                 height : img.height
               };
               mapCanvas.drawImage(drawArgs);
+              //update map array using the name of the img
+              const gridNumber = new Vector(gridPosition.x/mapCanvas.gridWidth, gridPosition.y/mapCanvas.gridHeight);
+              const spriteName = img.src.match(/(\/([^\/]+)\.\w+)$/)[2];
+              mapArray[gridNumber.x][gridNumber.y] = spriteName;
             }
           }
   }
   
-  function eraseElement(mapCanvas){
+  function eraseElement(mapCanvas, mapArray){
     return (e) => {
       e.preventDefault();
       if(isInsideCanvas){
         mapCanvas.clearGrid(gridPosition);
         mapCanvas.drawGridLine(gridPosition);
+        //update map array with the value empty
+        const gridNumber = new Vector(gridPosition.x/mapCanvas.gridWidth, gridPosition.y/mapCanvas.gridHeight);
+        mapArray[gridNumber.x][gridNumber.y] = "empty";
       }
     }
   }

@@ -3,6 +3,7 @@ define(function (require) {
   const DOM = require('helper').DOM;
   const debounce = require('helper').debounce;
   const array = require('helper').array;
+  const Map = require('helper').Map;
   const dragElement  = require(`drag-element`).dragElement;
   const drawElement  = require(`drag-element`).drawElement;
   const eraseElement = require(`drag-element`).eraseElement;
@@ -42,6 +43,7 @@ define(function (require) {
   }
   
   let mapCanvas = null;
+  let map = null;
   /*clicking on create button in map-info window will check canvas dimensions entered by user and then create a new map if the values are acceptables*/
   const createBut = DOM.getElementByClassName("create-map", mapBlock);
   createBut.addEventListener("click",() => {
@@ -82,7 +84,9 @@ define(function (require) {
     canvasBlock.appendChild(mapCanvas.DOMCanvas);
     mapCanvas.DOMCanvas.classList.add("map-canvas");
     mapCanvas.drawGridLines();
-    
+    const mapArray = array.create(mapCanvas.gridsNumber.x, mapCanvas.gridsNumber.y, "empty");
+    map = new Map(mapArray);
+
     const oldSprites = array.fromHtmlCol( spritesContainer.children );
     if(oldSprites.length){
       for(let i = 0; i < oldSprites.length; i++){
@@ -95,18 +99,24 @@ define(function (require) {
   });
   
   /*Map tool-box event handlers*/
+  const canvasEdit = DOM.getElementByClassName("canvas-edit", mapBlock);
+  const toolBox = DOM.getElementByClassName("map-toolbox", canvasEdit);
   //Clear map button
-  const clearMapBut = DOM.getElementByClassName("clear-map-but", mapBlock);
+  const clearMapBut = DOM.getElementByClassName("clear-map-but", toolBox);
   clearMapBut.addEventListener("click", () => {
+    if( map.isEmpty() ){
+      return;
+    }
     const clearConfirmed = confirm("Do you want to delete all map ? unsaved progress will be lost");
     if(clearConfirmed){
       mapCanvas.clear();
       mapCanvas.drawGridLines();
+      map.clear();
     }
   });
   
   //Clear grid button
-  const clearGridBut = DOM.getElementByClassName("clear-grid-but", mapBlock);
+  const clearGridBut = DOM.getElementByClassName("clear-grid-but", toolBox);
   clearGridBut.addEventListener("click", (e) => {
     const whiteDiv = DOM.createElement("div", {className : "draged-element"});
     whiteDiv.style.width  = mapCanvas.gridWidth + "px";
@@ -115,13 +125,44 @@ define(function (require) {
     whiteDiv.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
     
     const dragCallback   = debounce(dragElement(whiteDiv, mapCanvas), 50);
-    const eraseCallback  = eraseElement(mapCanvas);
+    const eraseCallback  = eraseElement(mapCanvas, map.array);
     const cancelCallback = cancelDrag(whiteDiv, dragCallback, eraseCallback);
 
     addEventListener("mousemove", dragCallback);
     addEventListener("mousedown", eraseCallback);
     addEventListener("keydown", cancelCallback);
   });
+  
+  //save map button 
+  const saveMapBut = DOM.getElementByClassName("save-map-but", toolBox);
+  const saveMapConfirm = DOM.getElementByClassName("save-map-confirm", canvasEdit);
+  const cancelSaveMap  = DOM.getElementByClassName("cancel-save-map", saveMapConfirm);
+  const confirmSaveMap = DOM.getElementByClassName("confirm-save-map", saveMapConfirm);
+  const mapNameInput   = saveMapConfirm.getElementsByTagName("input")[0];
+  
+  saveMapBut.addEventListener("click",() => {
+    DOM.showAndHide({showElement : saveMapConfirm});
+  });
+
+  confirmSaveMap.addEventListener("click", () => {
+    const name = mapNameInput.value.trim();
+    if(name === ""){
+      return;
+    }
+
+    let saveConfirmed = true;
+    if( map.isAlreadyInLocal(name) ){
+      saveConfirmed = confirm("This map already exists in your list. do you wana change it ?");
+    }
+    if(saveConfirmed){
+      map.name = name;
+      map.saveInLocal();
+    }
+    console.log(map)
+    DOM.showAndHide({hideElement : saveMapConfirm});
+  });
+  
+  cancelSaveMap.addEventListener("click", () => DOM.showAndHide({hideElement : saveMapConfirm}) );
   
   //clicking on the cancel button on the map-info window will just hide this window
   const cancelBut = DOM.getElementByClassName("cancel-map", mapBlock);
@@ -143,7 +184,7 @@ define(function (require) {
       const path  = "img/background/" + file.name;
       const spriteBlock = DOM.createElement("div", {className : "sprite-block"});
       const mapSprite = DOM.createElement("div", {className : "map-sprite"});
-      mapSprite.style.backgroundImage = `url(${path})`;
+      mapSprite.style.backgroundImage = `url("${path}")`;
       const label = DOM.createElement("label", {className : "not-selectable-text ellipsis-text"});
       label.textContent = file.name;
       
@@ -154,7 +195,7 @@ define(function (require) {
       //Attach event handler to be able to drag the sprite when added to the list
       spriteBlock.addEventListener("click",function(e){
         const dragedSprite = DOM.createElement("div", {className : "draged-element"});
-        dragedSprite.style.backgroundImage = `url(${path})`;
+        dragedSprite.style.backgroundImage = `url("${path}")`;
         dragedSprite.style.width  = mapCanvas.gridWidth  + "px";
         dragedSprite.style.height = mapCanvas.gridHeight + "px";
         dragedSprite.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
@@ -162,7 +203,7 @@ define(function (require) {
         
         const img = DOM.createElement("img", {src : path, width : mapCanvas.gridWidth, height : mapCanvas.gridHeight});
         const dragCallback   = debounce(dragElement(dragedSprite, mapCanvas, img), 50);
-        const drawCallback   = drawElement(img, mapCanvas);
+        const drawCallback   = drawElement(img, mapCanvas, map.array);
         const cancelCallback = cancelDrag(dragedSprite, dragCallback, drawCallback);
         
         addEventListener("mousemove", dragCallback);
