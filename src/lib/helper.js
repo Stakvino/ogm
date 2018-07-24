@@ -118,7 +118,6 @@ class Map {
 Map.prototype.saveInLocal = function(){
   const savedMaps = JSON.parse( localStorage.getItem("savedMaps") ) || {};
   savedMaps[this.name] = this.array;
-  console.log(savedMaps);
   localStorage.setItem("savedMaps", JSON.stringify(savedMaps) );
 }
 

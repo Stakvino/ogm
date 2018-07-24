@@ -128,15 +128,15 @@ button.create-new-map
   color: forestgreen;
   margin-left: 1em;
 }
-div.saved-map
+div.created-map
 {
   justify-content: space-around;
 }
-div.saved-map canvas.map-small
+div.created-map canvas.map-small
 {
   border: black solid 1px;
 }
-div.saved-map label.map-name
+div.created-map label.map-name
 {
   text-align: center;
   width: 50%;
@@ -145,7 +145,7 @@ div.saved-map label.map-name
   border-right: black solid 1px;
   font-family: sans-serif;
 }
-div.saved-map label.map-size
+div.created-map label.map-size
 {
   text-align: center;
   width: 15%;
@@ -153,11 +153,11 @@ div.saved-map label.map-size
   border-right: black solid 1px;
   padding: .4em 0 .6em 0;
 }
-div.saved-map button.open-map-but
+div.created-map button.open-map-but
 {
   width: 80px;
 }
-div.saved-map button.delete-map-but
+div.created-map button.delete-map-but
 {
   width: 80px;
 }

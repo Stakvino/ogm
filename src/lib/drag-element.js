@@ -7,7 +7,7 @@ define(function (require) {
   let isInsideCanvas = false;
   let gridPosition = null;
   //Event hundler that makes the dragged element follow the mouse position
-  function dragElement(element, mapCanvas, img = null){
+  function dragElement(element, mapCanvas, mapArray, img = null){
     document.body.appendChild(element);
     return (e) => {
             const canvasBounding = mapCanvas.DOMCanvas.getBoundingClientRect();
@@ -26,10 +26,10 @@ define(function (require) {
               //user is holding left mouse click in canvas
               if(e.buttons === leftMouseClick){
                 if(img === null){
-                  eraseElement(mapCanvas)(e);
+                  eraseElement(mapCanvas, mapArray)(e);
                 }
                 else{
-                  drawElement(img, mapCanvas)();
+                  drawElement(img, mapCanvas, mapArray)();
                 }
               }
             }else{
@@ -56,7 +56,7 @@ define(function (require) {
               mapCanvas.drawImage(drawArgs);
               //update map array using the name of the img
               const gridNumber = new Vector(gridPosition.x/mapCanvas.gridWidth, gridPosition.y/mapCanvas.gridHeight);
-              const spriteName = img.src.match(/(\/([^\/]+)\.\w+)$/)[2];
+              const spriteName = img.src.match(/[^\/]+$/)[0];
               mapArray[gridNumber.x][gridNumber.y] = spriteName;
             }
           }
