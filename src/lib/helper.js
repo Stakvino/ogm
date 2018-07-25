@@ -69,7 +69,7 @@ DOM.showAndHide = function({showElement, hideElement}){
     }
     return undefined;
   }
-
+  
 /******************************************************************************/
 //Helpers for array manipulation
 const array = Object.create(null);
@@ -107,28 +107,21 @@ array.fromHtmlCol = function(HtmlColl){
 /******************************************************************************/
 
 class Map {
-    constructor(mapArray, mapName = "") {
+    constructor(mapArray, gridSize, mapName = "") {
       this.array = mapArray;
+      this.gridSize = gridSize;
+      this.size = new Vector(this.array.length * this.gridSize.x, this.array[0].length * this.gridSize.y);
       this.rowsNumber = this.array.length;
       this.columnsNumber = this.array[0].length;
       this.mapName = mapName;
+      this.isSaved = true;
     }
 }
 
 Map.prototype.saveInLocal = function(){
   const savedMaps = JSON.parse( localStorage.getItem("savedMaps") ) || {};
-  savedMaps[this.name] = this.array;
+  savedMaps[this.name] = { mapArray : this.array, gridSize : this.gridSize };
   localStorage.setItem("savedMaps", JSON.stringify(savedMaps) );
-}
-
-Map.prototype.save = function(newMap){
-  this.array = newMap;
-  this.saveInLocal();
-}
-
-Map.prototype.setValue = function(x, y, value){
-  this.array[x][y] = value;
-  this.saveInLocal();
 }
 
 Map.prototype.isEmpty = function(){

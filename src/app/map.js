@@ -11,8 +11,9 @@ define(function (require) {
   
   const mapBlock = DOM.getElementByClassName("Map-block");
   const mapInfo = DOM.getElementByClassName("map-info", mapBlock);
-  const mapList = DOM.getElementByClassName("map-list", mapBlock)
-  const mapEdit = DOM.getElementByClassName("map-edit", mapBlock)
+  const mapList = DOM.getElementByClassName("map-list", mapBlock);
+  const createdMaps = DOM.getElementByClassName("created-maps", mapList);
+  const mapEdit = DOM.getElementByClassName("map-edit", mapBlock);
   
   const messageWarning = DOM.getElementByClassName("warning-message", mapInfo);
   const canvasBlock = DOM.getElementByClassName("canvas-block", mapBlock);
@@ -85,7 +86,8 @@ define(function (require) {
     mapCanvas.DOMCanvas.classList.add("map-canvas");
     mapCanvas.drawGridLines();
     const mapArray = array.create(mapCanvas.gridsNumber.x, mapCanvas.gridsNumber.y, "empty");
-    map = new Map(mapArray);
+    const gridSize = new Vector(gridWidth, gridHeight);
+    map = new Map(mapArray, gridSize);
 
     const oldSprites = array.fromHtmlCol( spritesContainer.children );
     if(oldSprites.length){
@@ -124,8 +126,8 @@ define(function (require) {
     whiteDiv.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
     whiteDiv.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
     
-    const dragCallback   = debounce(dragElement(whiteDiv, mapCanvas, map.array), 50);
-    const eraseCallback  = eraseElement(mapCanvas, map.array);
+    const dragCallback   = debounce(dragElement(whiteDiv, mapCanvas, map), 50);
+    const eraseCallback  = eraseElement(mapCanvas, map);
     const cancelCallback = cancelDrag(whiteDiv, dragCallback, eraseCallback);
 
     addEventListener("mousemove", dragCallback);
@@ -134,59 +136,58 @@ define(function (require) {
   });
   
   //elements used in the prosses of map saving
-  const saveMapBut = DOM.getElementByClassName("save-map-but", toolBox);
   const saveMapConfirm = DOM.getElementByClassName("save-map-confirm", canvasEdit);
-  const cancelSaveMap  = DOM.getElementByClassName("cancel-save-map", saveMapConfirm);
-  const confirmSaveMap = DOM.getElementByClassName("confirm-save-map", saveMapConfirm);
   const mapNameInput   = saveMapConfirm.getElementsByTagName("input")[0];
-  const createdMaps = DOM.getElementByClassName("created-maps", mapList);
   
-  function createMapBlock(mapName, mapSize){
-    const createdMapBlock = DOM.createElement("div", {className : "line-block created-map"});
-    const iconMapArray = map.array.slice(0, 10).map( e => e.slice(0, 10) );
-    const iconCanvas = new Canvas(100, 100, 10, 10);
-    iconCanvas.drawMap(iconMapArray);
-    iconCanvas.DOMCanvas.className = "map-small";
-    const nameLabel = DOM.createElement("label", {className : "map-name ellipsis-text", textContent : mapName});
-    const sizeLabel = DOM.createElement("label", {className : "map-size", textContent : `${mapSize.x}x${mapSize.y}`});
-    const openButton = DOM.createElement("button", {className : "open-map-but", textContent : "open"});
-    const deleteButton = DOM.createElement("button", {className : "delete-map-but", textContent : "delete"});
-    
-    DOM.appendChildren(createdMapBlock, [iconCanvas.DOMCanvas, nameLabel, sizeLabel, openButton, deleteButton]);
-    
-    return createdMapBlock;
-  }
-  
-  //save map event handlers 
+  //save map event handlers
+  const saveMapBut = DOM.getElementByClassName("save-map-but", toolBox);
   saveMapBut.addEventListener("click",() => {
     DOM.showAndHide({showElement : saveMapConfirm});
   });
-
+  
+  const confirmSaveMap = DOM.getElementByClassName("confirm-save-map", saveMapConfirm);
   confirmSaveMap.addEventListener("click", () => {
-    const name = mapNameInput.value.trim();
-    if(name === ""){
+    const mapName = mapNameInput.value.trim();
+    if(mapName === ""){
       return;
     }
 
-    let saveConfirmed = true;
-    if( map.isAlreadyInLocal(name) ){
-      saveConfirmed = confirm("This map already exists in your list. do you wana change it ?");
+    if( map.isAlreadyInLocal(mapName) ){
+      const saveConfirmed = confirm("This map already exists in your list. do you wana change it ?");
+      if(saveConfirmed){
+        map.name = mapName;
+        map.saveInLocal();
+        map.isSaved = true;
+        
+        //replace old map icon and map dimensions by the new one
+        const savedMapBlock = array.fromHtmlCol( createdMaps.children ).filter(function(e){
+          const currentMapName = DOM.getElementByClassName("map-name", e).textContent;
+          return currentMapName === mapName;
+        })[0];
+        
+        const iconMapArray = map.array.slice(0, 10).map( e => e.slice(0, 10) );
+        const OldMapIcon = DOM.getElementByClassName("map-small", savedMapBlock);
+        const NewMapIcon = new Canvas(100, 100, 10, 10);
+        NewMapIcon.DOMCanvas.className = "map-small";
+        NewMapIcon.drawMap(iconMapArray);
+        savedMapBlock.replaceChild(NewMapIcon.DOMCanvas, OldMapIcon);
+        const mapSizeLabel = DOM.getElementByClassName("map-size", savedMapBlock);
+        mapSizeLabel.textContent = `${map.size.x}x${map.size.y}`;
+      }
     }
     else{
-      const mapSize = new Vector(mapCanvas.width, mapCanvas.height);
-      const createdMapBlock = createMapBlock(name, mapSize);
+      const gridSize = new Vector(mapCanvas.gridWidth, mapCanvas.gridHeight);
+      const createdMapBlock = createMapBlock(map.array, mapName, gridSize, Canvas, createdMaps);
       createdMaps.appendChild(createdMapBlock);
-    }
-    
-    if(saveConfirmed){
-      map.name = name;
+      map.name = mapName;
       map.saveInLocal();
+      map.isSaved = true;
     }
-    //const mapNames = array.fromHtmlCol( createdMaps.getElementsByClassName("map-name") );
-    //const mapAlreadySaved = mapNames.filter( e => e.textContent === name );
+  
     DOM.showAndHide({hideElement : saveMapConfirm});
   });
   
+  const cancelSaveMap  = DOM.getElementByClassName("cancel-save-map", saveMapConfirm);
   cancelSaveMap.addEventListener("click", () => DOM.showAndHide({hideElement : saveMapConfirm}) );
   
   //clicking on the cancel button on the map-info window will just hide this window
@@ -198,7 +199,15 @@ define(function (require) {
   //clicking on the map list button will get you back to the map list block
   const returnToMapListBut = DOM.getElementByClassName("return-map-list", mapBlock);
   returnToMapListBut.addEventListener("click",() => {
-    DOM.showAndHide({showElement : mapList, hideElement : mapEdit});
+    if(!map.isSaved){
+     const confirmReturn = confirm("unsaved changes in map will be lost. Do you want to exit map edit mode anyways ?");
+     if(confirmReturn){
+       DOM.showAndHide({showElement : mapList, hideElement : mapEdit});
+      }
+    }
+    else{
+      DOM.showAndHide({showElement : mapList, hideElement : mapEdit});
+    }
   });
   
   //Load images from the background folder to use as map sprites when load map sprite button is clicked
@@ -227,8 +236,8 @@ define(function (require) {
         dragedSprite.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
         
         const img = DOM.createElement("img", {src : path, width : mapCanvas.gridWidth, height : mapCanvas.gridHeight});
-        const dragCallback   = debounce(dragElement(dragedSprite, mapCanvas, map.array, img), 50);
-        const drawCallback   = drawElement(img, mapCanvas, map.array);
+        const dragCallback   = debounce(dragElement(dragedSprite, mapCanvas, map, img), 50);
+        const drawCallback   = drawElement(img, mapCanvas, map);
         const cancelCallback = cancelDrag(dragedSprite, dragCallback, drawCallback);
         
         addEventListener("mousemove", dragCallback);
@@ -237,5 +246,65 @@ define(function (require) {
       });
     }
   });
+  
+  //load all previously saved maps in local storage
+  const savedMaps = JSON.parse( localStorage.getItem("savedMaps") ) || {};
+  
+  for(let mapName in savedMaps){
+    const mapArray = savedMaps[mapName].mapArray;
+    const gridSize = savedMaps[mapName].gridSize;
+
+    const createdMapBlock = createMapBlock(mapArray, mapName, gridSize, Canvas, createdMaps);
+    createdMaps.appendChild(createdMapBlock);
+  }
+  
+  function createMapBlock(mapArray, mapName, gridSize){
+    const createdMapBlock = DOM.createElement("div", {className : "line-block created-map"});
+    /*create small img for the saved map using canvas */
+    const iconMapArray = mapArray.slice(0, 10).map( e => e.slice(0, 10) );
+    const iconCanvas = new Canvas(100, 100, 10, 10);
+    iconCanvas.drawMap(iconMapArray);
+    iconCanvas.DOMCanvas.className = "map-small";
+    /**/
+    const nameLabel = DOM.createElement("label", {className : "map-name ellipsis-text", textContent : mapName});
+    const mapSize = new Vector(mapArray.length * gridSize.x, mapArray[0].length * gridSize.y);
+    const mapSizeLabel = DOM.createElement("label", {className : "map-size", textContent : `${mapSize.x}x${mapSize.y}`});
+    const gridSizeLabel = DOM.createElement("label", {className : "grid-size", textContent : `${gridSize.x}x${gridSize.y}`});
+    const openButton = DOM.createElement("button", {className : "open-map-but", textContent : "open"});
+    const deleteButton = DOM.createElement("button", {className : "delete-map-but", textContent : "delete"});
+    
+    openButton.addEventListener("click", function(){
+      const mapName = DOM.getElementByClassName("map-name", this.parentElement).textContent;
+      const mapArray = savedMaps[mapName].mapArray;
+      const gridSize = savedMaps[mapName].gridSize;
+      map = new Map(mapArray, gridSize);
+      
+      if(canvasBlock.firstChild){
+      canvasBlock.removeChild(canvasBlock.firstChild);
+      }
+      //create and append new map canvas
+      mapCanvas = new Canvas(map.size.x, map.size.y, gridSize.x, gridSize.y);
+      mapCanvas.DOMCanvas.classList.add("map-canvas");
+      mapCanvas.drawGridLines();
+      mapCanvas.drawMap(mapArray);
+      canvasBlock.appendChild(mapCanvas.DOMCanvas);
+      DOM.showAndHide({hideElement : mapList, showElement : mapEdit});
+    });
+    
+    deleteButton.addEventListener("click",function(){
+      const deleteConfirmed = confirm(`all data related to the map named "${mapName}" will be lost. Do you want to delete the map anyway ?`);
+      
+      if(deleteConfirmed){
+        const savedMaps = JSON.parse( localStorage.getItem("savedMaps") );
+        createdMaps.removeChild(this.parentElement);
+        delete savedMaps[mapName];
+        localStorage.setItem( "savedMaps", JSON.stringify( savedMaps ) );
+      }
+    });
+    
+    DOM.appendChildren(createdMapBlock, [iconCanvas.DOMCanvas, nameLabel, mapSizeLabel, gridSizeLabel, openButton, deleteButton]);
+    
+    return createdMapBlock;
+  }
   
 });

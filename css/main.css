@@ -114,6 +114,38 @@ div.Map-block
 div.map-list
 {
   flex-direction: column;
+  overflow-y: scroll;
+}
+div.map-list-head
+{
+  display: flex;
+  color: darkred;
+  font-size: 25px;
+  padding: 1em .4em;
+  border-bottom: black solid 1px;
+}
+div.map-list-head label
+{
+  text-align: center;
+  margin-right: 1.4em;
+}
+div.map-list-head label.map-name-head
+{
+  width: 35%;
+}
+div.map-list-head label.map-size-head
+{
+  width: 15%;
+}
+div.map-list-head label.grid-size-head
+{
+  width: 10%;
+}
+div.create-map-block
+{
+  border-bottom: black solid 1px;
+  width: 100%;
+  padding: 2em 0;
 }
 div.line-block
 {   
@@ -128,6 +160,9 @@ button.create-new-map
   color: forestgreen;
   margin-left: 1em;
 }
+div.created-maps
+{
+}
 div.created-map
 {
   justify-content: space-around;
@@ -135,11 +170,12 @@ div.created-map
 div.created-map canvas.map-small
 {
   border: black solid 1px;
+  background-color: white;
 }
 div.created-map label.map-name
 {
   text-align: center;
-  width: 50%;
+  width: 35%;
   padding: .4em 0 .6em 0;
   font-size: 1.4em;
   border-right: black solid 1px;
@@ -150,6 +186,14 @@ div.created-map label.map-size
   text-align: center;
   width: 15%;
   font-size: 1.4em;
+  border-right: black solid 1px;
+  padding: .4em 0 .6em 0;
+}
+div.created-map label.grid-size
+{
+  text-align: center;
+  width: 10%;
+  font-size: 1.3em;
   border-right: black solid 1px;
   padding: .4em 0 .6em 0;
 }

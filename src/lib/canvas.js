@@ -51,21 +51,22 @@ define(function (require) {
     
     for(let i = 0; i < mapArray.length; i++){
       for(let j = 0; j < mapArray[0].length; j++){
-        const src = "img/background/" + mapArray[i][j];
-        const img = DOM.createElement("img", {src : src});
-        const drawPosition = new Vector(i * this.gridWidth, j * this.gridHeight);
-        
-        img.addEventListener("load", () => {
-          const drawArgs = {
-                img : img,
-                x   : drawPosition.x,
-                y   : drawPosition.y,
-                width  : this.gridWidth,
-                height : this.gridHeight
-              };
-          this.drawImage(drawArgs);
-        });
-        
+        if(mapArray[i][j] !== "empty"){
+          const src = "img/background/" + mapArray[i][j];
+          const img = DOM.createElement("img", {src : src});
+          const drawPosition = new Vector(i * this.gridWidth, j * this.gridHeight);
+
+          img.addEventListener("load", () => {
+            const drawArgs = {
+                  img : img,
+                  x   : drawPosition.x,
+                  y   : drawPosition.y,
+                  width  : this.gridWidth,
+                  height : this.gridHeight
+                };
+            this.drawImage(drawArgs);
+          });  
+        }
       }
     }
     

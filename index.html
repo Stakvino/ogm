@@ -21,7 +21,7 @@
     </div>
     <div class="edit-blocks">
       <div class="Map-block edit-block show">
-        <div class="map-list">
+        <div class="map-list show">
           <div class="map-info hide">
               <div>
                   <label for="map_width">Map width : </label> <input type="text" id="map_width" class="canvas-dimension-input" value="600" required><label> px</label>
@@ -36,10 +36,14 @@
               </div>
               <div class="warning-message"></div>
           </div>
-          <div class="line-block"><button type="button" class="create-new-map"><i class="fas fa-plus"></i>Create new map</button></div>
-          <div class="created-maps">
-            <div class="line-block created-map"> <canvas width="100" height="100" class="map-small" ></canvas> <label class="map-name ellipsis-text">magical forest</label> <label class="map-size">5000x5000</label> <button type="button" class="open-map-but">open</button> <button type="button" class="delete-map-but">delete</button> </div>
+          <div class="create-map-block"><button type="button" class="create-new-map"><i class="fas fa-plus"></i>Create new map</button></div>
+          <div class="map-list-head">
+            <label class="map-icon-head">Map icon</label>
+            <label class="map-name-head">Map name</label>
+            <label class="map-size-head">Map size</label>
+            <label class="grid-size-head">Grid size</label>  
           </div>
+          <div class="created-maps"></div>
         </div>
         <div class="map-edit hide">
           <div class="map-block">
