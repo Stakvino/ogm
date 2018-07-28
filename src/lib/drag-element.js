@@ -26,10 +26,10 @@ define(function (require) {
               //user is holding left mouse click in canvas
               if(e.buttons === leftMouseClick){
                 if(img === null){
-                  eraseElement(mapCanvas, map.array, map.isSaved)(e);
+                  eraseElement(mapCanvas, map)(e);
                 }
                 else{
-                  drawElement(img, mapCanvas, map.array, map.isSaved)();
+                  drawElement(img, mapCanvas, map)();
                 }
               }
             }else{

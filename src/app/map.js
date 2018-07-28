@@ -142,7 +142,12 @@ define(function (require) {
   //save map event handlers
   const saveMapBut = DOM.getElementByClassName("save-map-but", toolBox);
   saveMapBut.addEventListener("click",() => {
+    //if this map is already named suggest the same name to erase save
+    if(map.name){
+      mapNameInput.value = map.name;
+    }
     DOM.showAndHide({showElement : saveMapConfirm});
+    mapNameInput.focus();
   });
   
   const confirmSaveMap = DOM.getElementByClassName("confirm-save-map", saveMapConfirm);
@@ -259,26 +264,27 @@ define(function (require) {
   }
   
   function createMapBlock(mapArray, mapName, gridSize){
-    const createdMapBlock = DOM.createElement("div", {className : "line-block created-map"});
+    const createdMapBlock = document.createElement("tr");
     /*create small img for the saved map using canvas */
     const iconMapArray = mapArray.slice(0, 10).map( e => e.slice(0, 10) );
     const iconCanvas = new Canvas(100, 100, 10, 10);
     iconCanvas.drawMap(iconMapArray);
     iconCanvas.DOMCanvas.className = "map-small";
     /**/
-    const nameLabel = DOM.createElement("label", {className : "map-name ellipsis-text", textContent : mapName});
+    const nameLabel = DOM.createElement("td", {className : "map-name ellipsis-text", textContent : mapName});
     const mapSize = new Vector(mapArray.length * gridSize.x, mapArray[0].length * gridSize.y);
-    const mapSizeLabel = DOM.createElement("label", {className : "map-size", textContent : `${mapSize.x}x${mapSize.y}`});
-    const gridSizeLabel = DOM.createElement("label", {className : "grid-size", textContent : `${gridSize.x}x${gridSize.y}`});
+    const mapSizeLabel = DOM.createElement("td", {className : "map-size", textContent : `${mapSize.x}x${mapSize.y}`});
+    const gridSizeLabel = DOM.createElement("td", {className : "grid-size", textContent : `${gridSize.x}x${gridSize.y}`});
     const openButton = DOM.createElement("button", {className : "open-map-but", textContent : "open"});
     const deleteButton = DOM.createElement("button", {className : "delete-map-but", textContent : "delete"});
     
     openButton.addEventListener("click", function(){
-      const mapName = DOM.getElementByClassName("map-name", this.parentElement).textContent;
+      const savedMaps  = JSON.parse( localStorage.getItem("savedMaps") );
+      const selectedTr = this.parentElement.parentElement;
+      const mapName = DOM.getElementByClassName("map-name", selectedTr).textContent;
       const mapArray = savedMaps[mapName].mapArray;
       const gridSize = savedMaps[mapName].gridSize;
-      map = new Map(mapArray, gridSize);
-      
+      map = new Map(mapArray, gridSize, mapName);
       if(canvasBlock.firstChild){
       canvasBlock.removeChild(canvasBlock.firstChild);
       }
@@ -296,14 +302,19 @@ define(function (require) {
       
       if(deleteConfirmed){
         const savedMaps = JSON.parse( localStorage.getItem("savedMaps") );
-        createdMaps.removeChild(this.parentElement);
+        const selectedTr = this.parentElement.parentElement;
+        createdMaps.removeChild(selectedTr);
         delete savedMaps[mapName];
         localStorage.setItem( "savedMaps", JSON.stringify( savedMaps ) );
       }
     });
     
-    DOM.appendChildren(createdMapBlock, [iconCanvas.DOMCanvas, nameLabel, mapSizeLabel, gridSizeLabel, openButton, deleteButton]);
+    const smallCanvas = document.createElement("td");
+    smallCanvas.appendChild(iconCanvas.DOMCanvas);
+    const buttonsTd   = document.createElement("td");
+    DOM.appendChildren(buttonsTd, [openButton, deleteButton]);
     
+    DOM.appendChildren(createdMapBlock, [smallCanvas, nameLabel, mapSizeLabel, gridSizeLabel, buttonsTd]);
     return createdMapBlock;
   }
   

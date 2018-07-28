@@ -113,7 +113,7 @@ class Map {
       this.size = new Vector(this.array.length * this.gridSize.x, this.array[0].length * this.gridSize.y);
       this.rowsNumber = this.array.length;
       this.columnsNumber = this.array[0].length;
-      this.mapName = mapName;
+      this.name = mapName;
       this.isSaved = true;
     }
 }

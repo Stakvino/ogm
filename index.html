@@ -37,13 +37,19 @@
               <div class="warning-message"></div>
           </div>
           <div class="create-map-block"><button type="button" class="create-new-map"><i class="fas fa-plus"></i>Create new map</button></div>
-          <div class="map-list-head">
-            <label class="map-icon-head">Map icon</label>
-            <label class="map-name-head">Map name</label>
-            <label class="map-size-head">Map size</label>
-            <label class="grid-size-head">Grid size</label>  
-          </div>
-          <div class="created-maps"></div>
+          <table class="map-list-table">
+            <thead>
+                <tr>
+                    <th class="map-icon-head">Map icon</th>
+                    <th class="map-name-head">Map name</th>
+                    <th class="map-size-head">Map size</th>
+                    <th class="grid-size-head">Grid size</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody class="created-maps"></tbody>
+            <tfoot></tfoot>
+          </table>
         </div>
         <div class="map-edit hide">
           <div class="map-block">
@@ -57,7 +63,7 @@
               </div>
               <div class="save-map-confirm hide">
                <label for="map_name">Map name : </label>
-               <input type="text" id="map_name">
+               <input type="text" id="map_name" maxlength="30">
                <button class="confirm-save-map">save map</button>
                <button class="cancel-save-map">cancel</button>
               </div>

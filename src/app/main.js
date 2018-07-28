@@ -39,6 +39,8 @@ define(function (require) {
       });
   });
   
+  //window.onbeforeunload = () => "";
+  
 });
 
 

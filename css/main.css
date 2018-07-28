@@ -115,95 +115,65 @@ div.map-list
 {
   flex-direction: column;
   overflow-y: scroll;
+  margin-left: 2em;
 }
-div.map-list-head
-{
-  display: flex;
-  color: darkred;
-  font-size: 25px;
-  padding: 1em .4em;
-  border-bottom: black solid 1px;
-}
-div.map-list-head label
+table.map-list-table
 {
   text-align: center;
-  margin-right: 1.4em;
+  border-collapse: collapse;
+  width: 95%;
+  margin: 2em 0;
 }
-div.map-list-head label.map-name-head
+table.map-list-table th[class]
 {
-  width: 35%;
+  color: darkred;
+  font-size: 25px;
+  padding: 1em 0;
+  border: black solid 1px;
 }
-div.map-list-head label.map-size-head
+table.map-list-table td
 {
-  width: 15%;
-}
-div.map-list-head label.grid-size-head
-{
-  width: 10%;
+  padding: 1em 0;
+  border: black solid 1px;
 }
 div.create-map-block
 {
-  border-bottom: black solid 1px;
   width: 100%;
   padding: 2em 0;
 }
-div.line-block
-{   
-  border-bottom: black solid 1px;
-  height: 120px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
+
 button.create-new-map
 {
   color: forestgreen;
-  margin-left: 1em;
 }
-div.created-maps
-{
-}
-div.created-map
-{
-  justify-content: space-around;
-}
-div.created-map canvas.map-small
+table.map-list-table canvas.map-small
 {
   border: black solid 1px;
   background-color: white;
 }
-div.created-map label.map-name
+table.map-list-table td.map-name
 {
   text-align: center;
-  width: 35%;
-  padding: .4em 0 .6em 0;
+  width: 35%;  
   font-size: 1.4em;
-  border-right: black solid 1px;
   font-family: sans-serif;
 }
-div.created-map label.map-size
+table.map-list-table td.map-size
 {
   text-align: center;
   width: 15%;
   font-size: 1.4em;
-  border-right: black solid 1px;
-  padding: .4em 0 .6em 0;
 }
-div.created-map label.grid-size
+table.map-list-table td.grid-size
 {
   text-align: center;
-  width: 10%;
+  width: 15%;
   font-size: 1.3em;
-  border-right: black solid 1px;
-  padding: .4em 0 .6em 0;
 }
-div.created-map button.open-map-but
+table.map-list-table button
 {
   width: 80px;
-}
-div.created-map button.delete-map-but
-{
-  width: 80px;
+  margin: 0 1em;
 }
 
 /****************************************************************************/
