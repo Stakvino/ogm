@@ -178,7 +178,8 @@ table.map-list-table button
 
 /****************************************************************************/
 
-div.map-info
+div.map-info,
+div.resize-info
 {
   position: absolute;
   top: 50px;
@@ -190,33 +191,40 @@ div.map-info
   flex-direction: column;
   border: black solid 1px;
 }
-div.map-info div:not(.warning-message)
+div.map-info div:not(.map-info-warning),
+div.resize-info div:not(.map-resize-warning)
 {
   margin-top: 4em;
 }
-div.map-info label[for]
+div.map-info label[for],
+div.resize-info label[for]
 {
   margin-left: 3em;
 }
-div.map-info input
+div.map-info input,
+div.resize-info input
 {
   width: 60px;
   text-align: center;
 }
-div.map-info div.create-cancel
+div.map-info div.create-cancel,
+div.resize-info div.resize-cancel
 {
   display: flex;
   justify-content: center;
 }
-div.map-info button
+div.map-info button,
+div.resize-info button
 {
   width: 120px;
 }
-div.map-info button.create-map
+div.map-info button.create-map,
+div.resize-info button.resize-map
 {
   margin-right: 4em;
 }
-div.warning-message
+div.map-info-warning,
+div.map-resize-warning
 {
   margin-top: 2em;
   color: red;

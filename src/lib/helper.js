@@ -77,6 +77,10 @@ const array = Object.create(null);
 array.create = function(numberOfRaws, numberOfCol, value = null){
   const array = [];
   for(let i = 0; i < numberOfRaws; i++){
+    if(numberOfCol === 0){
+      array.push(value);
+      continue;
+    }
     array[i] = [];
     for(let j = 0; j < numberOfCol; j++){
       array[i][j] = value;

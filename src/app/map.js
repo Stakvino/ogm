@@ -11,29 +11,31 @@ define(function (require) {
   
   const mapBlock = DOM.getElementByClassName("Map-block");
   const mapInfo = DOM.getElementByClassName("map-info", mapBlock);
+  const mapInfoWarning = DOM.getElementByClassName("map-info-warning", mapInfo);
   const mapList = DOM.getElementByClassName("map-list", mapBlock);
   const createdMaps = DOM.getElementByClassName("created-maps", mapList);
   const mapEdit = DOM.getElementByClassName("map-edit", mapBlock);
   
-  const messageWarning = DOM.getElementByClassName("warning-message", mapInfo);
   const canvasBlock = DOM.getElementByClassName("canvas-block", mapBlock);
   const mapSprites  = DOM.getElementByClassName("map-sprites", mapBlock);
   const spritesContainer = DOM.getElementByClassName("sprites-container", mapBlock);
   const addSprite = document.getElementById("load_map_sprite");
-  const dimensionsInput = array.fromHtmlCol( mapInfo.getElementsByTagName("input") );
+  const createMapInput = array.fromHtmlCol( mapInfo.getElementsByTagName("input") );
+  const resizeMapInfo = DOM.getElementByClassName("resize-info", mapBlock);
+  const resizeInputs = array.fromHtmlCol( resizeMapInfo.getElementsByTagName("input") );
   
   //clicking on create new map button will show the map-info window
   const createNewMapBut = DOM.getElementByClassName("create-new-map", mapBlock);
   createNewMapBut.addEventListener("click",() => {
-    //dimensionsInput.forEach( dimensionInput => dimensionInput.value = "" );
-    messageWarning.textContent = "";
+    //createMapInput.forEach( dimensionInput => dimensionInput.value = "" );
+    mapInfoWarning.textContent = "";
     DOM.showAndHide({showElement : mapInfo});
   });
   
 
   /* Make sure canvas width,height and grid width,height inputs are all numbers 
      using javascript to avoid firefox number input bug */
-  for(let dimensionInput of dimensionsInput){
+  for( let dimensionInput of createMapInput.concat(resizeInputs) ){
     dimensionInput.addEventListener("keydown",function(e){
       const input = e.key;
       //only numbers are allowed in canvas dimensions input , and backspace to delete
@@ -46,22 +48,22 @@ define(function (require) {
   let mapCanvas = null;
   let map = null;
   /*clicking on create button in map-info window will check canvas dimensions entered by user and then create a new map if the values are acceptables*/
-  const createBut = DOM.getElementByClassName("create-map", mapBlock);
+  const createBut = DOM.getElementByClassName("create-map", mapInfo);
   createBut.addEventListener("click",() => {
     //canvas dimension smaller then 20 or greater then 5000 or empty
-    const canvasDimensions = array.fromHtmlCol( mapBlock.getElementsByClassName("canvas-dimension-input") ).map(e => e.value);
+    const canvasDimensions = array.fromHtmlCol( mapInfo.getElementsByClassName("canvas-dimension-input") ).map(e => e.value);
     const canvasWrongDimension = canvasDimensions.filter(e => e < 20 || e > 5000 || e === "").length;
     //grid dimension smaller then 20 or greater then 200 or empty
-    const gridDimensions = array.fromHtmlCol( mapBlock.getElementsByClassName("grid-dimension-input") ).map(e => e.value);
+    const gridDimensions = array.fromHtmlCol( mapInfo.getElementsByClassName("grid-dimension-input") ).map(e => e.value);
     const gridWrongDimension = gridDimensions.filter(e => e < 10 || e > 200 || e === "").length;
 
     /*clicking on the create button on the map-info window will check if all dimensions are correctly typed and then create a new canvas with these dimensions*/
     if(canvasWrongDimension){
-     messageWarning.textContent = "canvas dimensions must be between 20 and 5000";
+     mapInfoWarning.textContent = "canvas dimensions must be between 20 and 5000";
      return;
     }
     if(gridWrongDimension){
-     messageWarning.textContent = "grid dimensions must be between 10 and 200";
+     mapInfoWarning.textContent = "grid dimensions must be between 10 and 200";
      return;
     }
     
@@ -71,7 +73,7 @@ define(function (require) {
     const gridHeight = Number(gridDimensions[1]);
     
     if(gridWidth > canvasWidth || gridHeight > canvasHeight){
-      messageWarning.textContent = "grid dimensions must be smaller then canvas dimensions";
+      mapInfoWarning.textContent = "grid dimensions must be smaller then canvas dimensions";
       return;
     }
 
@@ -135,7 +137,49 @@ define(function (require) {
     addEventListener("keydown", cancelCallback);
   });
   
-  //elements used in the prosses of map saving
+  //resize map
+  const resizeMapBut = DOM.getElementByClassName("resize-map-but", toolBox);
+  const resizeInfoWarning = DOM.getElementByClassName("resize-info-warning", resizeMapInfo);
+  const confirmResizeBut = DOM.getElementByClassName("resize-map", resizeMapInfo);
+  
+  resizeMapBut.addEventListener("click", () => {
+    resizeInputs[0].value = mapCanvas.width;
+    resizeInputs[1].value = mapCanvas.height;
+    resizeInputs[2].value = mapCanvas.gridWidth;
+    resizeInputs[3].value = mapCanvas.gridHeight;
+    DOM.showAndHide({showElement : resizeMapInfo});
+  });
+  
+  confirmResizeBut.addEventListener("click", () => {
+    const canvasDimensions = array.fromHtmlCol( resizeMapInfo.getElementsByClassName("canvas-dimension-input") ).map(e => e.value);
+    const gridDimensions = array.fromHtmlCol( resizeMapInfo.getElementsByClassName("grid-dimension-input") ).map(e => e.value);
+    
+    const wrongDimensions = null;
+
+    if(wrongDimensions){
+     const confirmResize = confirm("These dimensions will make you lose data from this map. do you really wanna resize ?");
+     if(!confirmResize){
+       return;
+     }
+    }
+    
+    const canvasWidth  = Number(canvasDimensions[0]);
+    const canvasHeight = Number(canvasDimensions[1]);
+    const gridWidth  = Number(gridDimensions[0]);
+    const gridHeight = Number(gridDimensions[1]);
+    
+    if(gridWidth > canvasWidth || gridHeight > canvasHeight){
+      resizeInfoWarning.textContent = "grid dimensions must be smaller then canvas dimensions";
+      return;
+    }
+  });
+  
+  const cancelResizeBut = DOM.getElementByClassName("cancel-resize", mapBlock);
+  cancelResizeBut.addEventListener("click",() => {
+    DOM.showAndHide({hideElement : resizeMapInfo});
+  });
+  
+  //save map
   const saveMapConfirm = DOM.getElementByClassName("save-map-confirm", canvasEdit);
   const mapNameInput   = saveMapConfirm.getElementsByTagName("input")[0];
   
@@ -150,8 +194,8 @@ define(function (require) {
     mapNameInput.focus();
   });
   
-  const confirmSaveMap = DOM.getElementByClassName("confirm-save-map", saveMapConfirm);
-  confirmSaveMap.addEventListener("click", () => {
+  const confirmSaveBut = DOM.getElementByClassName("confirm-save-but", saveMapConfirm);
+  confirmSaveBut.addEventListener("click", () => {
     const mapName = mapNameInput.value.trim();
     if(mapName === ""){
       return;
@@ -175,7 +219,7 @@ define(function (require) {
         const NewMapIcon = new Canvas(100, 100, 10, 10);
         NewMapIcon.DOMCanvas.className = "map-small";
         NewMapIcon.drawMap(iconMapArray);
-        savedMapBlock.replaceChild(NewMapIcon.DOMCanvas, OldMapIcon);
+        OldMapIcon.parentElement.replaceChild(NewMapIcon.DOMCanvas, OldMapIcon);
         const mapSizeLabel = DOM.getElementByClassName("map-size", savedMapBlock);
         mapSizeLabel.textContent = `${map.size.x}x${map.size.y}`;
       }
@@ -192,17 +236,17 @@ define(function (require) {
     DOM.showAndHide({hideElement : saveMapConfirm});
   });
   
-  const cancelSaveMap  = DOM.getElementByClassName("cancel-save-map", saveMapConfirm);
-  cancelSaveMap.addEventListener("click", () => DOM.showAndHide({hideElement : saveMapConfirm}) );
+  const cancelSaveBut  = DOM.getElementByClassName("cancel-save-but", saveMapConfirm);
+  cancelSaveBut.addEventListener("click", () => DOM.showAndHide({hideElement : saveMapConfirm}) );
   
   //clicking on the cancel button on the map-info window will just hide this window
-  const cancelBut = DOM.getElementByClassName("cancel-map", mapBlock);
-  cancelBut.addEventListener("click",() => {
+  const cancelCreateBut = DOM.getElementByClassName("cancel-map", mapInfo);
+  cancelCreateBut.addEventListener("click",() => {
     DOM.showAndHide({hideElement : mapInfo});
   });
 
   //clicking on the map list button will get you back to the map list block
-  const returnToMapListBut = DOM.getElementByClassName("return-map-list", mapBlock);
+  const returnToMapListBut = DOM.getElementByClassName("return-map-list", mapEdit);
   returnToMapListBut.addEventListener("click",() => {
     if(!map.isSaved){
      const confirmReturn = confirm("unsaved changes in map will be lost. Do you want to exit map edit mode anyways ?");

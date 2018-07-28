@@ -1,3 +1,37 @@
+function create(numberOfRaws, numberOfCol, value = null){
+  const array = [];
+  for(let i = 0; i < numberOfRaws; i++){
+    if(numberOfCol === 0){
+      array.push(value);
+      continue;
+    }
+    array[i] = [];
+    for(let j = 0; j < numberOfCol; j++){
+      array[i][j] = value;
+    }
+  }
+  return array;
+}
+
+function arrayLimits(array){
+  const xLimits = create(array.length, 0, 0);
+  const yLimits = create(array[0].length, 0, 0);
+  for(let i = 0; i < array.length; i++){
+    for(let j = 0; j < array[0].length; j++){
+      if(array[i][j] !== "empty"){
+        yLimits[i] = j;
+        xLimits[j] = i; 
+      }
+    }
+  }
+  console.log(xLimits, yLimits)
+  return {xlimit : Math.max(...xLimits), ylimit : Math.max(...yLimits)};
+}
+
+const ar = JSON.parse( localStorage.getItem("savedMaps") )["random"].mapArray;
+
+console.log(arrayLimits(ar))
+
 define(function (require) {
   const Canvas = require('canvas').Canvas;
   const DOM = require('helper').DOM;

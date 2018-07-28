@@ -24,17 +24,17 @@
         <div class="map-list show">
           <div class="map-info hide">
               <div>
-                  <label for="map_width">Map width : </label> <input type="text" id="map_width" class="canvas-dimension-input" value="600" required><label> px</label>
-                  <label for="map_height">Map height : </label> <input type="text" id="map_height" class="canvas-dimension-input" value="400" required><label> px</label>
+                  <label for="map_width">Map width : </label> <input type="text" id="map_width" class="canvas-dimension-input" value="600" maxlength="4" required><label> px</label>
+                  <label for="map_height">Map height : </label> <input type="text" id="map_height" class="canvas-dimension-input" value="400" maxlength="4" required><label> px</label>
               </div>
               <div>
-                  <label for="grid_width">Grid width : </label> <input type="text" id="grid_width" class="grid-dimension-input" value="100" required><label> px</label>
-                  <label for="grid_height">Grid height : </label> <input type="text" id="grid_height" class="grid-dimension-input" value="100" required><label> px</label>
+                  <label for="grid_width">Grid width : </label> <input type="text" id="grid_width" class="grid-dimension-input" value="100" maxlength="3" required><label> px</label>
+                  <label for="grid_height">Grid height : </label> <input type="text" id="grid_height" class="grid-dimension-input" value="100" maxlength="3" required><label> px</label>
               </div>
               <div class="create-cancel">
                   <button type="button" class="create-map" >Create map</button> <button type="button" class="cancel-map" >Cancel </button>
               </div>
-              <div class="warning-message"></div>
+              <div class="map-info-warning"></div>
           </div>
           <div class="create-map-block"><button type="button" class="create-new-map"><i class="fas fa-plus"></i>Create new map</button></div>
           <table class="map-list-table">
@@ -59,13 +59,28 @@
               <div class="map-toolbox">
                 <button class="map-tool clear-map-but" title="clear map"><i class="fas fa-chalkboard"></i></button>
                 <button class="map-tool clear-grid-but" title="clear grid"><i class="far fa-square"></i></button>
+                <button class="map-tool resize-map-but" title="resize map"><i class="fas fa-expand"></i></button>
                 <button class="map-tool save-map-but" title="save map"><i class="far fa-save"></i></button>
+              </div>
+              <div class="resize-info hide">
+                <div>
+                    <label for="map_width">Map width : </label> <input type="text" id="map_width" class="canvas-dimension-input resize-input"  maxlength="4" required><label> px</label>
+                    <label for="map_height">Map height : </label> <input type="text" id="map_height" class="canvas-dimension-input resize-input"  maxlength="4" required><label> px</label>
+                </div>
+                <div>
+                    <label for="grid_width">Grid width : </label> <input type="text" id="grid_width" class="grid-dimension-input resize-input" maxlength="3" required><label> px</label>
+                    <label for="grid_height">Grid height : </label> <input type="text" id="grid_height" class="grid-dimension-input resize-input" maxlength="3" required><label> px</label>
+                </div>
+                <div class="resize-cancel">
+                    <button type="button" class="resize-map" >Resize map</button> <button type="button" class="cancel-resize" >Cancel </button>
+                </div>
+                <div class="map-resize-warning"></div>
               </div>
               <div class="save-map-confirm hide">
                <label for="map_name">Map name : </label>
                <input type="text" id="map_name" maxlength="30">
-               <button class="confirm-save-map">save map</button>
-               <button class="cancel-save-map">cancel</button>
+               <button class="confirm-save-but">save map</button>
+               <button class="cancel-save-but">cancel</button>
               </div>
             </div>
           </div>
