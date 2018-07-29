@@ -74,7 +74,7 @@ DOM.showAndHide = function({showElement, hideElement}){
 //Helpers for array manipulation
 const array = Object.create(null);
 
-array.create = function(numberOfRaws, numberOfCol, value = null){
+array.create = function(numberOfRaws, numberOfCol = 0, value = null){
   const array = [];
   for(let i = 0; i < numberOfRaws; i++){
     if(numberOfCol === 0){
@@ -154,6 +154,20 @@ Map.prototype.clear = function(){
   }
 }
 
+//Finds the coordinates in map array in which there is no data after them (only empty)
+Map.prototype.limits = function(){
+  const xLimits = array.create(this.array.length, 0, 0);
+  const yLimits = array.create(this.array[0].length, 0, 0);
+  for(let i = 0; i < this.array.length; i++){
+    for(let j = 0; j < this.array[0].length; j++){
+      if(this.array[i][j] !== "empty"){
+        xLimits[i] = j;
+        yLimits[j] = i; 
+      }
+    }
+  }
+  return {x : Math.max(...xLimits) + 1, y : Math.max(...yLimits) + 1};
+}
 /******************************************************************************/
 //Function to control FPS and stop resume callback function in requestAnimationFrame
 function runAnimation(frameFunc,FPS) {

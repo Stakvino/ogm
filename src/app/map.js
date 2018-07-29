@@ -153,25 +153,52 @@ define(function (require) {
   confirmResizeBut.addEventListener("click", () => {
     const canvasDimensions = array.fromHtmlCol( resizeMapInfo.getElementsByClassName("canvas-dimension-input") ).map(e => e.value);
     const gridDimensions = array.fromHtmlCol( resizeMapInfo.getElementsByClassName("grid-dimension-input") ).map(e => e.value);
-    
-    const wrongDimensions = null;
 
-    if(wrongDimensions){
-     const confirmResize = confirm("These dimensions will make you lose data from this map. do you really wanna resize ?");
-     if(!confirmResize){
-       return;
-     }
-    }
-    
     const canvasWidth  = Number(canvasDimensions[0]);
     const canvasHeight = Number(canvasDimensions[1]);
     const gridWidth  = Number(gridDimensions[0]);
     const gridHeight = Number(gridDimensions[1]);
     
+    const limits = map.limits();
+    const newSize = new Vector( Math.floor(canvasWidth/gridWidth), Math.floor(canvasHeight/gridHeight) );
+    const loseData = newSize.x < limits.x || newSize.y < limits.y;
+
+    if(loseData){
+     const confirmResize = confirm("These dimensions will make you lose data from this map. do you really wanna resize ?");
+     if(confirmResize){
+       map.array = map.array.slice(0, limits.y).map( e => e.slice(0, limits.x) ); 
+     }
+     else{
+       return;
+     }
+    }
+    else{
+     if(newSize.x > map.array[0].length){
+       const diff = newSize.x - map.array[0].length;
+       map.array = map.array.map( e => e.concat( array.create(diff, 0, "empty") ) );
+     }
+     if(newSize.y > map.array.length){
+       const diff = newSize.y - map.array.length;
+       map.array = map.array.concat( array.create(map.array.length, diff, "empty") );
+     }
+    }
+    
     if(gridWidth > canvasWidth || gridHeight > canvasHeight){
       resizeInfoWarning.textContent = "grid dimensions must be smaller then canvas dimensions";
       return;
     }
+    
+    //remove old canvas if it's there
+    if(canvasBlock.firstChild){
+      canvasBlock.removeChild(canvasBlock.firstChild);
+    }
+    
+    //create and append new map canvas
+    mapCanvas = new Canvas(canvasWidth, canvasHeight, gridWidth, gridHeight);
+    canvasBlock.appendChild(mapCanvas.DOMCanvas);
+    mapCanvas.DOMCanvas.classList.add("map-canvas");
+    mapCanvas.drawGridLines();
+    mapCanvas.drawMap(map.array)
   });
   
   const cancelResizeBut = DOM.getElementByClassName("cancel-resize", mapBlock);
