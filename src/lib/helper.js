@@ -111,20 +111,21 @@ array.fromHtmlCol = function(HtmlColl){
 /******************************************************************************/
 
 class Map {
-    constructor(mapArray, gridSize, mapName = "") {
+    constructor(mapArray, mapSize, gridSize, mapName = "") {
       this.array = mapArray;
       this.gridSize = gridSize;
-      this.size = new Vector(this.array.length * this.gridSize.x, this.array[0].length * this.gridSize.y);
+      this.size = mapSize;
+      this.name = mapName;
+      
       this.rowsNumber = this.array.length;
       this.columnsNumber = this.array[0].length;
-      this.name = mapName;
       this.isSaved = true;
     }
 }
 
 Map.prototype.saveInLocal = function(){
   const savedMaps = JSON.parse( localStorage.getItem("savedMaps") ) || {};
-  savedMaps[this.name] = { mapArray : this.array, gridSize : this.gridSize };
+  savedMaps[this.name] = { mapArray : this.array, mapSize : this.size, gridSize : this.gridSize };
   localStorage.setItem("savedMaps", JSON.stringify(savedMaps) );
 }
 

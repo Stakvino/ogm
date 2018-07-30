@@ -46,7 +46,7 @@ define(function (require) {
   function drawElement(img, mapCanvas, map){
     return () => {
             if(isInsideCanvas){
-              const gridNumber = new Vector(gridPosition.x/mapCanvas.gridWidth, gridPosition.y/mapCanvas.gridHeight);
+              const gridNumber = new Vector(gridPosition.y/mapCanvas.gridHeight, gridPosition.x/mapCanvas.gridWidth);
               const spriteName = img.src.match(/[^\/]+$/)[0];
               
               if(map.array[gridNumber.x][gridNumber.y] !== spriteName){
@@ -70,7 +70,7 @@ define(function (require) {
     return (e) => {
       e.preventDefault();
       if(isInsideCanvas){
-        const gridNumber = new Vector(gridPosition.x/mapCanvas.gridWidth, gridPosition.y/mapCanvas.gridHeight);
+        const gridNumber = new Vector(gridPosition.y/mapCanvas.gridHeight, gridPosition.x/mapCanvas.gridWidth);
         if(map.array[gridNumber.x][gridNumber.y] !== "empty"){
           mapCanvas.clearGrid(gridPosition);
           mapCanvas.drawGridLine(gridPosition);

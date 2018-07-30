@@ -4,8 +4,6 @@ define(function (require) {
 
   class Canvas {
     constructor(width = 400, height = 400, gridWidth = 40, gridHeight = 40) {
-      this.gridsNumber = new Vector( Math.floor(width/gridWidth), Math.floor(height/gridHeight) );
-
       this.width  = width;
       this.height = height;
       this.gridWidth  = gridWidth;
@@ -54,7 +52,7 @@ define(function (require) {
         if(mapArray[i][j] !== "empty"){
           const src = "img/background/" + mapArray[i][j];
           const img = DOM.createElement("img", {src : src});
-          const drawPosition = new Vector(i * this.gridWidth, j * this.gridHeight);
+          const drawPosition = new Vector(j * this.gridWidth, i * this.gridHeight);
 
           img.addEventListener("load", () => {
             const drawArgs = {
