@@ -89,6 +89,24 @@ array.create = function(numberOfRaws, numberOfCol = 0, value = null){
   return array;
 }
 
+array.createCopy = function(copiedArray){
+  const copy = [];
+  for(let i = 0; i < copiedArray.length;i++){
+    if(typeof copiedArray[i] === "object"){
+     if( Array.isArray(copiedArray[i]) ){
+      copy.push( array.createCopy(copiedArray[i]) );
+     }else{
+      //change to deep copy
+      copy.push( Object.assign(copiedArray[i]) ); 
+     }
+    }
+    else{
+      copy.push(copiedArray[i]);
+    }
+  }
+  return copy;
+}
+
 array.fromObj = function(obj){
   const array = [];
   for(let prop in obj){
@@ -108,6 +126,27 @@ array.fromHtmlCol = function(HtmlColl){
   return array;
 }
 
+array.haveDifferentValues = function(array1, array2){
+
+  if(array1.length !== array2.length){
+    return true;
+  }
+  let result = false;
+  //dont handle objects
+  for(let i = 0; i < array1.length; i++){
+    if( Array.isArray(array1[i]) && Array.isArray(array2[i]) ){
+      result = result || array.haveDifferentValues(array1[i], array2[i]);
+    }
+    else if(array1[i] === array2[i]){
+      continue;    
+    }
+    else{
+      return true;
+    }
+  }
+  return result;
+}
+
 /******************************************************************************/
 
 class Map {
@@ -121,6 +160,11 @@ class Map {
       this.columnsNumber = this.array[0].length;
       this.isSaved = true;
     }
+    
+}
+
+Map.prototype.createCopy = function(){
+  return new Map(this.array, this.Size, this.gridSize, this.name);
 }
 
 Map.prototype.saveInLocal = function(){

@@ -48,23 +48,32 @@ define(function (require) {
   
   let mapCanvas = null;
   let map = null;
+  let mapHistory = null;
+  
+  addEventListener("mouseup",() => {
+    console.log(1)               
+  });
+  
+  //Dimensions limits for canvas and grid
+  const canvasMin = 20;
+  const canvasMax = 5000;
+  const gridMin = 20;
+  const gridMax = 200;
   /*clicking on create button in map-info window will check canvas dimensions entered by user and then create a new map if the values are acceptables*/
   const createBut = DOM.getElementByClassName("create-map", mapInfo);
   createBut.addEventListener("click",() => {
-    //canvas dimension smaller then 20 or greater then 5000 or empty
     const canvasDimensions = array.fromHtmlCol( mapInfo.getElementsByClassName("canvas-dimension-input") ).map(e => e.value);
-    const canvasWrongDimension = canvasDimensions.filter(e => e < 20 || e > 5000 || e === "").length;
-    //grid dimension smaller then 20 or greater then 200 or empty
+    const canvasWrongDimension = canvasDimensions.filter(e => e < canvasMin || e > canvasMax || e === "").length;
     const gridDimensions = array.fromHtmlCol( mapInfo.getElementsByClassName("grid-dimension-input") ).map(e => e.value);
-    const gridWrongDimension = gridDimensions.filter(e => e < 10 || e > 200 || e === "").length;
-
+    const gridWrongDimension =  gridDimensions.filter(e => e < gridMin || e > gridMax || e === "").length;
+    
     /*clicking on the create button on the map-info window will check if all dimensions are correctly typed and then create a new canvas with these dimensions*/
     if(canvasWrongDimension){
-     mapInfoWarning.textContent = "canvas dimensions must be between 20 and 5000";
+     mapInfoWarning.textContent = `canvas dimensions must be between ${canvasMin} and ${canvasMax}`;
      return;
     }
     if(gridWrongDimension){
-     mapInfoWarning.textContent = "grid dimensions must be between 10 and 200";
+     mapInfoWarning.textContent = `grid dimensions must be between ${gridMin} and ${gridMax}`;
      return;
     }
     
@@ -94,7 +103,9 @@ define(function (require) {
     const mapSize  = new Vector(canvasWidth, canvasHeight);
     const gridSize = new Vector(gridWidth, gridHeight);
     map = new Map(mapArray, mapSize, gridSize);
-
+    //init map history array with the created map
+    mapHistory = [new Map(mapArray, mapSize, gridSize)];
+    
     const oldSprites = array.fromHtmlCol( spritesContainer.children );
     if(oldSprites.length){
       for(let i = 0; i < oldSprites.length; i++){
@@ -143,7 +154,7 @@ define(function (require) {
   
   //resize map
   const resizeMapBut = DOM.getElementByClassName("resize-map-but", toolBox);
-  const resizeInfoWarning = DOM.getElementByClassName("resize-info-warning", resizeMapInfo);
+  const resizeInfoWarning = DOM.getElementByClassName("map-resize-warning", resizeMapInfo);
   const confirmResizeBut = DOM.getElementByClassName("resize-map", resizeMapInfo);
   
   resizeMapBut.addEventListener("click", () => {
@@ -157,8 +168,20 @@ define(function (require) {
   
   confirmResizeBut.addEventListener("click", () => {
     const canvasDimensions = array.fromHtmlCol( resizeMapInfo.getElementsByClassName("canvas-dimension-input") ).map(e => e.value);
+    const canvasWrongDimension = canvasDimensions.filter(e => e < canvasMin || e > canvasMax || e === "").length;
     const gridDimensions = array.fromHtmlCol( resizeMapInfo.getElementsByClassName("grid-dimension-input") ).map(e => e.value);
-
+    const gridWrongDimension =  gridDimensions.filter(e => e < gridMin || e > gridMax || e === "").length;
+    
+    /*clicking on the resize button on the resize window will check if all dimensions are correctly typed and then resize the canvas with these dimensions*/
+    if(canvasWrongDimension){
+     resizeInfoWarning.textContent = "canvas dimensions must be between 20 and 5000";
+     return;
+    }
+    if(gridWrongDimension){
+     resizeInfoWarning.textContent = "grid dimensions must be between 10 and 200";
+     return;
+    }
+    
     const canvasWidth  = Number(canvasDimensions[0]);
     const canvasHeight = Number(canvasDimensions[1]);
     const gridWidth  = Number(gridDimensions[0]);
@@ -192,6 +215,9 @@ define(function (require) {
       newMapArray = newMapArray.map( e => e.slice(0, columnsNumber) ); 
     }
     
+    map = new Map(newMapArray, newMapSize, newGridSize, map.name);
+    map.isSaved = false;
+    
     //remove old canvas if it's there
     if(canvasBlock.firstChild){
       canvasBlock.removeChild(canvasBlock.firstChild);
@@ -202,11 +228,8 @@ define(function (require) {
     canvasBlock.appendChild(mapCanvas.DOMCanvas);
     mapCanvas.DOMCanvas.classList.add("map-canvas");
     mapCanvas.drawGridLines();
-    mapCanvas.drawMap(map.array);
-    
-    map = new Map(newMapArray, newMapSize, newGridSize, map.name);
-    map.isSaved = false;
-
+    mapCanvas.drawMap(map);
+  
     DOM.showAndHide({hideElement : resizeMapInfo});
   });
   
@@ -214,11 +237,7 @@ define(function (require) {
   cancelResizeBut.addEventListener("click",() => {
     DOM.showAndHide({hideElement : resizeMapInfo});
   });
-  resizeMapInfo.addEventListener("keydown", (e) => {
-    if(e.key === "Escape"){
-      DOM.showAndHide({hideElement : resizeMapInfo});
-    }
-  });
+  resizeMapInfo.addEventListener("keydown", escapeClose);
   
   //save map
   const saveMapConfirm = DOM.getElementByClassName("save-map-confirm", canvasEdit);
@@ -261,8 +280,8 @@ define(function (require) {
       }
     }
     else{
-      createdMaps.appendChild(createdMapBlock);
       map.name = mapName;
+      createdMaps.appendChild(createdMapBlock);
       map.saveInLocal();
       map.isSaved = true;
     }
@@ -272,17 +291,14 @@ define(function (require) {
   
   const cancelSaveBut  = DOM.getElementByClassName("cancel-save-but", saveMapConfirm);
   cancelSaveBut.addEventListener("click", () => DOM.showAndHide({hideElement : saveMapConfirm}) );
+  saveMapConfirm.addEventListener("keydown", escapeClose);
   
   //clicking on the cancel button on the map-info window will just hide this window
   const cancelCreateBut = DOM.getElementByClassName("cancel-map", mapInfo);
   cancelCreateBut.addEventListener("click",() => {
     DOM.showAndHide({hideElement : mapInfo});
   });
-  mapInfo.addEventListener("keydown", (e) => {
-    if(e.key === "Escape"){
-      DOM.showAndHide({hideElement : mapInfo});
-    }
-  });
+  mapInfo.addEventListener("keydown", escapeClose);
   
   //clicking on the map list button will get you back to the map list block
   const returnToMapListBut = DOM.getElementByClassName("return-map-list", mapEdit);
@@ -348,17 +364,18 @@ define(function (require) {
     createdMaps.appendChild(createdMapBlock);
   }
   
-  function createMapBlock(map){
+  function createMapBlock(newMap){
     const createdMapBlock = document.createElement("tr");
     /*create small img for the saved map using canvas */
-    const iconMapArray = map.array.slice(0, 10).map( e => e.slice(0, 10) );
+    const iconMapArray = newMap.array.slice(0, 10).map( e => e.slice(0, 10) );
+    const iconMap = new Map(iconMapArray);
     const iconCanvas = new Canvas(100, 100, 10, 10);
-    iconCanvas.drawMap(iconMapArray);
+    iconCanvas.drawMap(iconMap);
     iconCanvas.DOMCanvas.className = "map-small";
     /**/
-    const nameLabel = DOM.createElement("td", {className : "map-name ellipsis-text", textContent : map.name});
-    const mapSizeLabel = DOM.createElement("td", {className : "map-size", textContent : `${map.size.x}x${map.size.y}`});
-    const gridSizeLabel = DOM.createElement("td", {className : "grid-size", textContent : `${map.gridSize.x}x${map.gridSize.y}`});
+    const nameLabel = DOM.createElement("td", {className : "map-name ellipsis-text", textContent : newMap.name});
+    const mapSizeLabel = DOM.createElement("td", {className : "map-size", textContent : `${newMap.size.x}x${newMap.size.y}`});
+    const gridSizeLabel = DOM.createElement("td", {className : "grid-size", textContent : `${newMap.gridSize.x}x${newMap.gridSize.y}`});
     const openButton = DOM.createElement("button", {className : "open-map-but", textContent : "open"});
     const deleteButton = DOM.createElement("button", {className : "delete-map-but", textContent : "delete"});
     
@@ -369,8 +386,11 @@ define(function (require) {
       const mapArray = savedMaps[mapName].mapArray;
       const mapSize = savedMaps[mapName].mapSize;
       const gridSize = savedMaps[mapName].gridSize;
-      
+
       map = new Map(mapArray, mapSize, gridSize, mapName);
+      //init map history array with the opened map
+      mapHistory = [new Map(mapArray, mapSize, gridSize, mapName)];
+      
       if(canvasBlock.firstChild){
       canvasBlock.removeChild(canvasBlock.firstChild);
       }
@@ -378,19 +398,20 @@ define(function (require) {
       mapCanvas = new Canvas(map.size.x, map.size.y, gridSize.x, gridSize.y);
       mapCanvas.DOMCanvas.classList.add("map-canvas");
       mapCanvas.drawGridLines();
-      mapCanvas.drawMap(mapArray);
+      mapCanvas.drawMap(map);
       canvasBlock.appendChild(mapCanvas.DOMCanvas);
+      
       DOM.showAndHide({hideElement : mapList, showElement : mapEdit});
     });
     
     deleteButton.addEventListener("click",function(){
-      const deleteConfirmed = confirm(`all data related to the map named "${mapName}" will be lost. Do you want to delete the map anyway ?`);
+      const deleteConfirmed = confirm(`all data related to the map named "${newMap.name}" will be lost. Do you want to delete the map anyway ?`);
       
       if(deleteConfirmed){
         const savedMaps = JSON.parse( localStorage.getItem("savedMaps") );
         const selectedTr = this.parentElement.parentElement;
         createdMaps.removeChild(selectedTr);
-        delete savedMaps[mapName];
+        delete savedMaps[newMap.name];
         localStorage.setItem( "savedMaps", JSON.stringify( savedMaps ) );
       }
     });
@@ -402,6 +423,20 @@ define(function (require) {
     
     DOM.appendChildren(createdMapBlock, [smallCanvas, nameLabel, mapSizeLabel, gridSizeLabel, buttonsTd]);
     return createdMapBlock;
+  }
+  
+  function escapeClose(e){
+    if(e.key === "Escape"){
+      DOM.showAndHide({hideElement : this});
+    }
+  }
+  
+  function saveHistory(){
+    const oldMap = mapHistory[mapHistory.length - 1];
+    if(oldMap && array.haveDifferentValues(oldMap.array, map.array) ){
+      const newMapHistory = new Map(map.array)
+      mapHistory.push()
+    }
   }
   
 });

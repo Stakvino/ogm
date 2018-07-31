@@ -1,10 +1,9 @@
-
 define(function (require) {
   const Canvas = require('canvas').Canvas;
   const DOM = require('helper').DOM;
   const array = require('helper').array;
   require('app/map');
-  
+
   //remove default dotted outline when button is focused with js to avoid firefox bug
   const buttons = array.fromHtmlCol( document.getElementsByTagName("button") );
   buttons.forEach( (button) => {

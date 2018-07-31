@@ -13,7 +13,7 @@ define(function (require) {
       this.ctx = this.DOMCanvas.getContext("2d");
     }
   }
-
+  
   Canvas.prototype.clear = function(){
     this.ctx.clearRect(0,0,this.width,this.height);
   }
@@ -45,12 +45,12 @@ define(function (require) {
     this.ctx.drawImage(...drawArgs);
   }
   
-  Canvas.prototype.drawMap = function(mapArray){
-    
-    for(let i = 0; i < mapArray.length; i++){
-      for(let j = 0; j < mapArray[0].length; j++){
-        if(mapArray[i][j] !== "empty"){
-          const src = "img/background/" + mapArray[i][j];
+  Canvas.prototype.drawMap = function(map){
+
+    for(let i = 0; i < map.rowsNumber; i++){
+      for(let j = 0; j < map.columnsNumber; j++){
+        if(map.array[i][j] !== "empty"){
+          const src = "img/background/" + map.array[i][j];
           const img = DOM.createElement("img", {src : src});
           const drawPosition = new Vector(j * this.gridWidth, i * this.gridHeight);
 
