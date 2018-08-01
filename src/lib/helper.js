@@ -161,10 +161,31 @@ class Map {
       this.isSaved = true;
     }
     
+    get elemetsTypes() {
+      const typesArray = [];
+      for(let i = 0; i < this.rowsNumber; i++){
+        for(let j = 0; j < this.columnsNumber; j++){
+          if( !typesArray.includes(this.array[i][j]) && this.array[i][j] !== "empty"){
+            typesArray.push(this.array[i][j])
+          }
+        }
+      }
+      return typesArray;
+    }
 }
 
 Map.prototype.createCopy = function(){
-  return new Map(this.array, this.Size, this.gridSize, this.name);
+  const mapArray = array.createCopy( this.array );
+  let mapSize = this.size;
+  if(mapSize){
+  mapSize = new Vector(this.size.x, this.size.y);   
+  }
+  let gridSize = this.gridSize;
+  if(gridSize){
+  gridSize = new Vector(this.gridSize.x, this.gridSize.y);   
+  }
+  
+  return new Map(mapArray, mapSize, gridSize, this.name);
 }
 
 Map.prototype.saveInLocal = function(){

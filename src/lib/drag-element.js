@@ -10,12 +10,17 @@ define(function (require) {
   function dragElement(element, mapCanvas, map, img = null){
     document.body.appendChild(element);
     return (e) => {
+            const mousePosition = new Vector(e.pageX, e.pageY);
+      
             const canvasBounding = mapCanvas.DOMCanvas.getBoundingClientRect();
             const canvasPosition = new Vector(canvasBounding.left + window.scrollX , canvasBounding.top + window.scrollY);
-            const mousePosition = new Vector(e.pageX, e.pageY);
-            const canvasSize = new Vector(mapCanvas.width, mapCanvas.height);      
+            const canvasSize = new Vector(canvasBounding.width, canvasBounding.height);
       
-            if( mousePosition.isInsideRect(canvasPosition, canvasSize) ){
+            const canvasBlockBounding = mapCanvas.DOMCanvas.parentElement.getBoundingClientRect();
+            const canvasBlockPosition = new Vector(canvasBlockBounding.left + window.scrollX , canvasBlockBounding.top + window.scrollY);
+            const canvasBlockSize = new Vector(canvasBlockBounding.width, canvasBlockBounding.height);      
+      
+            if( mousePosition.isInsideRect(canvasPosition, canvasSize) &&  mousePosition.isInsideRect(canvasBlockPosition, canvasBlockSize) ){
               const positionInCanvas = new Vector(mousePosition.x - canvasPosition.x, mousePosition.y - canvasPosition.y);
               gridPosition = new Vector(Math.floor(positionInCanvas.x/mapCanvas.gridWidth), Math.floor(positionInCanvas.y/mapCanvas.gridHeight) );
               gridPosition = new Vector(gridPosition.x * mapCanvas.gridWidth, gridPosition.y * mapCanvas.gridHeight);

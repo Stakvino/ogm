@@ -270,7 +270,7 @@ div.map-toolbox
   padding: 1em;
   margin-right: 4em;
 }
-button.map-tool
+div.map-toolbox button.map-tool
 {
   display: flex;
   justify-content: center;
@@ -282,7 +282,8 @@ button.map-tool
   margin-bottom: .5em;
   border: white solid 1px;
 }
-button.save-map-but
+div.map-toolbox button.save-as-but,
+div.map-toolbox button.save-but
 {
   font-size: 1.5em;
 }

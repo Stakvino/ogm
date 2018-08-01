@@ -4,8 +4,8 @@ define(function (require) {
 
   class Canvas {
     constructor(width = 400, height = 400, gridWidth = 40, gridHeight = 40) {
-      this.width  = width;
-      this.height = height;
+      this.width  = Math.floor( width/gridWidth ) * gridWidth;
+      this.height = Math.floor( height/gridHeight ) * gridHeight;
       this.gridWidth  = gridWidth;
       this.gridHeight = gridHeight;
 
