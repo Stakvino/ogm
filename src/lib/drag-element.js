@@ -7,7 +7,7 @@ define(function (require) {
   let isInsideCanvas = false;
   let gridPosition = null;
   //Event hundler that makes the dragged element follow the mouse position
-  function dragElement(element, mapCanvas, map, img = null){
+  function dragElement(element, mapCanvas, map, dawCallback, elementToDraw){
     document.body.appendChild(element);
     return (e) => {
             const mousePosition = new Vector(e.pageX, e.pageY);
@@ -30,12 +30,7 @@ define(function (require) {
               isInsideCanvas = true;
               //user is holding left mouse click in canvas
               if(e.buttons === leftMouseClick){
-                if(img === null){
-                  eraseElement(mapCanvas, map)(e);
-                }
-                else{
-                  drawElement(img, mapCanvas, map)();
-                }
+                dawCallback(mapCanvas, map, elementToDraw)(e);
               }
             }else{
               element.style.left = `${mousePosition.x - mapCanvas.gridWidth/2}px`;
@@ -48,7 +43,7 @@ define(function (require) {
   }
   
   //Handle the mouse click if you are dragging an element
-  function drawElement(img, mapCanvas, map){
+  function drawElement(mapCanvas, map, img){
     return () => {
             if(isInsideCanvas){
               const gridNumber = new Vector(gridPosition.y/mapCanvas.gridHeight, gridPosition.x/mapCanvas.gridWidth);
@@ -69,6 +64,21 @@ define(function (require) {
               }
             }
           }
+  }
+  
+  function drawColor(mapCanvas, map, color){
+    return (e) => {
+      e.preventDefault();
+      if(isInsideCanvas){
+        const gridNumber = new Vector(gridPosition.y/mapCanvas.gridHeight, gridPosition.x/mapCanvas.gridWidth);
+        if(map.array[gridNumber.x][gridNumber.y] !== color){
+          mapCanvas.drawColor(gridPosition, color);
+          //update map array with the value empty
+          map.array[gridNumber.x][gridNumber.y] = color;
+          map.isSaved = false;
+        }
+      }
+    }
   }
   
   function eraseElement(mapCanvas, map){
@@ -104,6 +114,7 @@ define(function (require) {
   return {
     dragElement  : dragElement,
     drawElement  : drawElement,
+    drawColor    : drawColor,
     eraseElement : eraseElement,
     cancelDrag   : cancelDrag
   }

@@ -6,6 +6,7 @@ define(function (require) {
   const Map = require('helper').Map;
   const dragElement  = require(`drag-element`).dragElement;
   const drawElement  = require(`drag-element`).drawElement;
+  const drawColor    = require(`drag-element`).drawColor;
   const eraseElement = require(`drag-element`).eraseElement;
   const cancelDrag   = require(`drag-element`).cancelDrag;
   
@@ -105,6 +106,33 @@ define(function (require) {
   /*Map tool-box event handlers*/
   const canvasEdit = DOM.getElementByClassName("canvas-edit", mapBlock);
   const toolBox = DOM.getElementByClassName("map-toolbox", canvasEdit);
+  
+  const colorsInput = toolBox.getElementsByTagName(`input`)[0];
+  let selectedColor = "#ffffff";
+  colorsInput.addEventListener("input", function(e){
+    selectedColor = this.value;
+    const colorDiv = DOM.createElement("div", {className : "draged-element"});
+    colorDiv.style.width  = mapCanvas.gridWidth + "px";
+    colorDiv.style.height = mapCanvas.gridHeight + "px";
+    colorDiv.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
+    colorDiv.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
+    colorDiv.style.backgroundColor = selectedColor;
+    colorDiv.dataset.color = selectedColor;
+    
+    const dragCallback   = debounce(dragElement(colorDiv, mapCanvas, map, drawColor, selectedColor), 50);
+    const drawColorCallback = drawColor(mapCanvas, map, selectedColor);
+    const cancelCallback = cancelDrag(colorDiv, dragCallback, drawColorCallback);
+
+    addEventListener("mousemove", dragCallback);
+    addEventListener("mousedown", drawColorCallback);
+    addEventListener("keydown", cancelCallback);
+  });
+
+  const eraseElementsBut = DOM.getElementByClassName("colors-but", toolBox);
+  eraseElementsBut.addEventListener("click", () => {
+    colorsInput.click();
+  });
+  
   //Clear map button
   const clearMapBut = DOM.getElementByClassName("clear-map-but", toolBox);
   clearMapBut.addEventListener("click", () => {
@@ -126,7 +154,7 @@ define(function (require) {
     whiteDiv.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
     whiteDiv.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
     
-    const dragCallback   = debounce(dragElement(whiteDiv, mapCanvas, map), 50);
+    const dragCallback   = debounce(dragElement(whiteDiv, mapCanvas, map, eraseElement), 50);
     const eraseCallback  = eraseElement(mapCanvas, map);
     const cancelCallback = cancelDrag(whiteDiv, dragCallback, eraseCallback);
 
@@ -471,8 +499,8 @@ define(function (require) {
         dragedSprite.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
         
         const img = DOM.createElement("img", {src : path, width : mapCanvas.gridWidth, height : mapCanvas.gridHeight});
-        const dragCallback   = debounce(dragElement(dragedSprite, mapCanvas, map, img), 50);
-        const drawCallback   = drawElement(img, mapCanvas, map);
+        const dragCallback   = debounce(dragElement(dragedSprite, mapCanvas, map, drawElement, img), 50);
+        const drawCallback   = drawElement(mapCanvas, map, img);
         const cancelCallback = cancelDrag(dragedSprite, dragCallback, drawCallback);
         
         addEventListener("mousemove", dragCallback);
@@ -503,6 +531,7 @@ define(function (require) {
     if(oldMap && array.haveDifferentValues(oldMap.array, map.array) ){
      const savedMap = map.createCopy();
      mapHistory.push(savedMap);
+     map.isSaved = false;
     }
   }
   

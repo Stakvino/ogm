@@ -283,7 +283,8 @@ div.map-toolbox button.map-tool
   border: white solid 1px;
 }
 div.map-toolbox button.save-as-but,
-div.map-toolbox button.save-but
+div.map-toolbox button.save-but,
+div.map-toolbox button.colors-but
 {
   font-size: 1.5em;
 }

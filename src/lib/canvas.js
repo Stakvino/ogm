@@ -45,6 +45,11 @@ define(function (require) {
     this.ctx.drawImage(...drawArgs);
   }
   
+  Canvas.prototype.drawColor = function(gridPosition, color){
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(gridPosition.x,gridPosition.y,this.gridWidth,this.gridHeight);
+  }
+  
   Canvas.prototype.drawMap = function(map){
 
     for(let i = 0; i < map.rowsNumber; i++){
