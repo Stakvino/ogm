@@ -55,20 +55,27 @@ define(function (require) {
     for(let i = 0; i < map.rowsNumber; i++){
       for(let j = 0; j < map.columnsNumber; j++){
         if(map.array[i][j] !== "empty"){
-          const src = "img/background/" + map.array[i][j];
-          const img = DOM.createElement("img", {src : src});
           const drawPosition = new Vector(j * this.gridWidth, i * this.gridHeight);
+          //if data matches a hex representation of a color draw the color
+          if( /^#\w{6}$/.test(map.array[i][j]) ){
+            this.drawColor(drawPosition, map.array[i][j]);
+          }
+          //otherwise its an img
+          else{
+            const src = "img/sprites/map/" + map.array[i][j];
+            const img = DOM.createElement("img", {src : src});
 
-          img.addEventListener("load", () => {
-            const drawArgs = {
-                  img : img,
-                  x   : drawPosition.x,
-                  y   : drawPosition.y,
-                  width  : this.gridWidth,
-                  height : this.gridHeight
-                };
-            this.drawImage(drawArgs);
-          });  
+            img.addEventListener("load", () => {
+              const drawArgs = {
+                    img : img,
+                    x   : drawPosition.x,
+                    y   : drawPosition.y,
+                    width  : this.gridWidth,
+                    height : this.gridHeight
+                  };
+              this.drawImage(drawArgs);
+            });  
+          }
         }
       }
     }

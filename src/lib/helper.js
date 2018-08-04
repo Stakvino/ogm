@@ -161,12 +161,12 @@ class Map {
       this.isSaved = true;
     }
     
-    get elemetsTypes() {
+    get elemetsNames() {
       const typesArray = [];
       for(let i = 0; i < this.rowsNumber; i++){
         for(let j = 0; j < this.columnsNumber; j++){
           if( !typesArray.includes(this.array[i][j]) && this.array[i][j] !== "empty"){
-            typesArray.push(this.array[i][j])
+            typesArray.push(this.array[i][j]);
           }
         }
       }

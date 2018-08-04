@@ -11,7 +11,6 @@ define(function (require) {
     document.body.appendChild(element);
     return (e) => {
             const mousePosition = new Vector(e.pageX, e.pageY);
-      
             const canvasBounding = mapCanvas.DOMCanvas.getBoundingClientRect();
             const canvasPosition = new Vector(canvasBounding.left + window.scrollX , canvasBounding.top + window.scrollY);
             const canvasSize = new Vector(canvasBounding.width, canvasBounding.height);
@@ -57,6 +56,7 @@ define(function (require) {
                 width  : img.width,
                 height : img.height
                };
+
                mapCanvas.drawImage(drawArgs);
                //update map array using the name of the img
                map.array[gridNumber.x][gridNumber.y] = spriteName;
@@ -73,7 +73,7 @@ define(function (require) {
         const gridNumber = new Vector(gridPosition.y/mapCanvas.gridHeight, gridPosition.x/mapCanvas.gridWidth);
         if(map.array[gridNumber.x][gridNumber.y] !== color){
           mapCanvas.drawColor(gridPosition, color);
-          //update map array with the value empty
+          //update map array with the hex representation of the color
           map.array[gridNumber.x][gridNumber.y] = color;
           map.isSaved = false;
         }
@@ -102,9 +102,11 @@ define(function (require) {
     //Give the callback a name in this one to be able to use it as reference inside
     return function cancelCallback(e) {
                 if(e.key === "Escape"){
-                  document.body.removeChild(element);
+                  if(element.parentElement === document.body){
+                    document.body.removeChild(element);
+                  }
                   removeEventListener("mousemove", dragCallback);
-                  removeEventListener("click", drawCallback);
+                  removeEventListener("mousedown", drawCallback);
                   removeEventListener("keydown", cancelCallback);
                   isInsideCanvas = false;
               }

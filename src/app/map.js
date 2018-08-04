@@ -56,6 +56,7 @@ define(function (require) {
   const canvasMax = 5000;
   const gridMin = 20;
   const gridMax = 200;
+  const rHexColor = /^#[0-9a-fA-F]{6}$/;
   
   /*clicking on create button in map-info window will check canvas dimensions entered by user and then create a new map if the values are acceptables*/
   const createBut = DOM.getElementByClassName("create-map", mapInfo);
@@ -109,19 +110,41 @@ define(function (require) {
   
   const colorsInput = toolBox.getElementsByTagName(`input`)[0];
   let selectedColor = "#ffffff";
+  
+  /*use to save a reference to the previous cancelCallback so that i remove it
+  in case user is clicking on input multiple times*/
+  let cancelCallback = null;
+  
   colorsInput.addEventListener("input", function(e){
+    
+    if(cancelCallback !== null){
+      //simulate an escape keyboard key click
+      cancelCallback({key : "Escape"});
+    }
+    
     selectedColor = this.value;
     const colorDiv = DOM.createElement("div", {className : "draged-element"});
     colorDiv.style.width  = mapCanvas.gridWidth + "px";
     colorDiv.style.height = mapCanvas.gridHeight + "px";
-    colorDiv.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
-    colorDiv.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
+    const canvasBlockRect = canvasBlock.getClientRects()[0];
+    colorDiv.style.left = canvasBlockRect.x + window.scrollX + "px";
+    colorDiv.style.top  = canvasBlockRect.y + window.scrollY +  "px";
     colorDiv.style.backgroundColor = selectedColor;
-    colorDiv.dataset.color = selectedColor;
+    
+
+    const elementsNames = map.elemetsNames;
+    const elementsCreated = array.fromHtmlCol( spritesContainer.children ).map( e => e.getElementsByTagName("label")[0].textContent );
+    //if there is a color element used in the map and not added in spriteContainer add it
+    for(let elementName of elementsNames){
+      if( !elementsCreated.includes(elementName) && rHexColor.test(elementName) ){
+        const colorBlock = createColorBlock(elementName);
+        spritesContainer.appendChild(colorBlock);
+      }
+    }
     
     const dragCallback   = debounce(dragElement(colorDiv, mapCanvas, map, drawColor, selectedColor), 50);
     const drawColorCallback = drawColor(mapCanvas, map, selectedColor);
-    const cancelCallback = cancelDrag(colorDiv, dragCallback, drawColorCallback);
+    cancelCallback = cancelDrag(colorDiv, dragCallback, drawColorCallback);
 
     addEventListener("mousemove", dragCallback);
     addEventListener("mousedown", drawColorCallback);
@@ -445,10 +468,15 @@ define(function (require) {
       
       cleanSpritesBlocks();
       
-      const spriteNames = map.elemetsTypes;
-      for(let spriteName of spriteNames){
-        const spriteBlock = createSpriteBlock(spriteName);
-        spritesContainer.appendChild(spriteBlock);
+      const elemetsNames = map.elemetsNames;
+      for(let elemetsName of elemetsNames){
+        let elementBlock = null;
+        if( rHexColor.test(elemetsName) ){
+          elementBlock = createColorBlock(elemetsName);
+        }else{
+          elementBlock = createSpriteBlock(elemetsName);
+        }
+        spritesContainer.appendChild(elementBlock);
       }
       
       DOM.showAndHide({hideElement : mapList, showElement : mapEdit});
@@ -479,7 +507,7 @@ define(function (require) {
   
   //create the sprite block used in the map edit to drag and draw sprites
   function createSpriteBlock(spriteName){
-    const path  = "img/background/" + spriteName;
+      const path  = "img/sprites/map/" + spriteName;
       const spriteBlock = DOM.createElement("div", {className : "sprite-block"});
       const mapSprite = DOM.createElement("div", {className : "map-sprite"});
       mapSprite.style.backgroundImage = `url("${path}")`;
@@ -491,17 +519,17 @@ define(function (require) {
 
       //Attach event handler to be able to drag the sprite when added to the list
       spriteBlock.addEventListener("click",function(e){
-        const dragedSprite = DOM.createElement("div", {className : "draged-element"});
-        dragedSprite.style.backgroundImage = `url("${path}")`;
-        dragedSprite.style.width  = mapCanvas.gridWidth  + "px";
-        dragedSprite.style.height = mapCanvas.gridHeight + "px";
-        dragedSprite.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
-        dragedSprite.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
+        const dragedElement = DOM.createElement("div", {className : "draged-element"});
+        dragedElement.style.backgroundImage = `url("${path}")`;
+        dragedElement.style.width  = mapCanvas.gridWidth  + "px";
+        dragedElement.style.height = mapCanvas.gridHeight + "px";
+        dragedElement.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
+        dragedElement.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
         
         const img = DOM.createElement("img", {src : path, width : mapCanvas.gridWidth, height : mapCanvas.gridHeight});
-        const dragCallback   = debounce(dragElement(dragedSprite, mapCanvas, map, drawElement, img), 50);
+        const dragCallback   = debounce(dragElement(dragedElement, mapCanvas, map, drawElement, img), 50);
         const drawCallback   = drawElement(mapCanvas, map, img);
-        const cancelCallback = cancelDrag(dragedSprite, dragCallback, drawCallback);
+        const cancelCallback = cancelDrag(dragedElement, dragCallback, drawCallback);
         
         addEventListener("mousemove", dragCallback);
         addEventListener("mousedown", drawCallback);
@@ -509,6 +537,38 @@ define(function (require) {
       });
     
     return spriteBlock;
+  }
+  
+  //create the sprite block used in the map edit to drag and draw sprites
+  function createColorBlock(colorHex){
+      const colorBlock = DOM.createElement("div", {className : "sprite-block"});
+      const mapColor = DOM.createElement("div", {className : "map-sprite"});
+      mapColor.style.backgroundColor = colorHex;
+      const label = DOM.createElement("label", {className : "not-selectable-text"});
+      label.textContent = colorHex;
+      
+      //make the sprite block that contains the sprite img and the name of the sprite
+      DOM.appendChildren(colorBlock, [mapColor, label]);
+
+      //Attach event handler to be able to drag the sprite when added to the list
+      colorBlock.addEventListener("click",function(e){
+        const dragedElement = DOM.createElement("div", {className : "draged-element"});
+        dragedElement.style.backgroundColor = colorHex;
+        dragedElement.style.width  = mapCanvas.gridWidth  + "px";
+        dragedElement.style.height = mapCanvas.gridHeight + "px";
+        dragedElement.style.top  = `${e.pageY - mapCanvas.gridHeight/2}px`;
+        dragedElement.style.left = `${e.pageX - mapCanvas.gridWidth/2}px`;
+        
+        const dragCallback   = debounce(dragElement(dragedElement, mapCanvas, map, drawColor, dragedElement), 50);
+        const drawCallback   = drawColor(mapCanvas, map, colorHex);
+        const cancelCallback = cancelDrag(dragedElement, dragCallback, drawCallback);
+        
+        addEventListener("mousemove", dragCallback);
+        addEventListener("mousedown", drawCallback);
+        addEventListener("keydown", cancelCallback);
+      });
+    
+    return colorBlock;
   }
   
   function cleanSpritesBlocks(){
