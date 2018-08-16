@@ -1,5 +1,6 @@
 define(function (require) {
   const Canvas = require('canvas').Canvas;
+  const ColorPicker = require('color-picker').ColorPicker;
   const DOM = require('helper').DOM;
   const debounce = require('helper').debounce;
   const array = require('helper').array;
@@ -108,30 +109,12 @@ define(function (require) {
   const canvasEdit = DOM.getElementByClassName("canvas-edit", mapBlock);
   const toolBox = DOM.getElementByClassName("map-toolbox", canvasEdit);
   
-  const colorsInput = toolBox.getElementsByTagName(`input`)[0];
-  let selectedColor = "#ffffff";
   
-  /*use to save a reference to the previous cancelCallback so that i remove it
-  in case user is clicking on input multiple times*/
-  let cancelCallback = null;
-  
-  colorsInput.addEventListener("input", function(e){
-    
-    if(cancelCallback !== null){
-      //simulate an escape keyboard key click
-      cancelCallback({key : "Escape"});
-    }
-    
-    selectedColor = this.value;
-    const colorDiv = DOM.createElement("div", {className : "draged-element"});
-    colorDiv.style.width  = mapCanvas.gridWidth + "px";
-    colorDiv.style.height = mapCanvas.gridHeight + "px";
-    const canvasBlockRect = canvasBlock.getClientRects()[0];
-    colorDiv.style.left = canvasBlockRect.x + window.scrollX + "px";
-    colorDiv.style.top  = canvasBlockRect.y + window.scrollY +  "px";
-    colorDiv.style.backgroundColor = selectedColor;
-    
-
+  //draw color button
+  const drawColorBut = DOM.getElementByClassName("colors-but", toolBox);
+  const colorPicker = new ColorPicker();
+  drawColorBut.addEventListener("click", () => {
+    colorPicker.show();
     const elementsNames = map.elemetsNames;
     const elementsCreated = array.fromHtmlCol( spritesContainer.children ).map( e => e.getElementsByTagName("label")[0].textContent );
     //if there is a color element used in the map and not added in spriteContainer add it
@@ -141,6 +124,30 @@ define(function (require) {
         spritesContainer.appendChild(colorBlock);
       }
     }
+  });
+  
+  colorPicker.selectButton.addEventListener("click", () => {
+    
+  });
+  
+  let selectedColor = "#ffffff";
+  
+  /*use to save a reference to the previous cancelCallback so that i remove it
+  in case user is clicking on input multiple times*/
+  //let cancelCallback = null;
+  function colorsInputCallback(e){
+    /*if(cancelCallback !== null){
+      //simulate an escape keyboard key click
+      cancelCallback({key : "Escape"});
+    }*/
+    selectedColor = colorPicker.selectedColor.hex.str;
+    const colorDiv = DOM.createElement("div", {className : "draged-element"});
+    colorDiv.style.width  = mapCanvas.gridWidth + "px";
+    colorDiv.style.height = mapCanvas.gridHeight + "px";
+    const canvasBlockRect = canvasBlock.getClientRects()[0];
+    colorDiv.style.left = e.pageX - mapCanvas.gridWidth/2 + "px";
+    colorDiv.style.top  = e.pageY - mapCanvas.gridHeight/2 + "px";
+    colorDiv.style.backgroundColor = selectedColor;
     
     const dragCallback   = debounce(dragElement(colorDiv, mapCanvas, map, drawColor, selectedColor), 50);
     const drawColorCallback = drawColor(mapCanvas, map, selectedColor);
@@ -149,12 +156,9 @@ define(function (require) {
     addEventListener("mousemove", dragCallback);
     addEventListener("mousedown", drawColorCallback);
     addEventListener("keydown", cancelCallback);
-  });
-
-  const eraseElementsBut = DOM.getElementByClassName("colors-but", toolBox);
-  eraseElementsBut.addEventListener("click", () => {
-    colorsInput.click();
-  });
+  }
+  
+  colorPicker.selectButton.addEventListener("click", colorsInputCallback);
   
   //Clear map button
   const clearMapBut = DOM.getElementByClassName("clear-map-but", toolBox);
@@ -544,7 +548,7 @@ define(function (require) {
       const colorBlock = DOM.createElement("div", {className : "sprite-block"});
       const mapColor = DOM.createElement("div", {className : "map-sprite"});
       mapColor.style.backgroundColor = colorHex;
-      const label = DOM.createElement("label", {className : "not-selectable-text"});
+      const label = document.createElement("label");
       label.textContent = colorHex;
       
       //make the sprite block that contains the sprite img and the name of the sprite

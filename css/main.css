@@ -1,10 +1,9 @@
-button
+div.main-window button
 {
   padding: .4em .2em;
   display: inline-block;
-  color: #555555;
 }
-button:hover
+div.main-window button:hover
 {
   cursor: pointer;
 }
@@ -145,6 +144,10 @@ div.create-map-block
 button.create-new-map
 {
   color: forestgreen;
+}
+button.create-new-map i.fa-plus
+{
+  margin-right: .2em;
 }
 table.map-list-table canvas.map-small
 {
@@ -326,16 +329,13 @@ canvas.map-canvas
 button.return-map-list
 {
   max-width: 110px;
-  display: inline-flex;
-  justify-content: space-around;
   align-items: center;
   margin: 1em;
   padding-bottom: .6em; 
 }
-span.return-arrow
+button.return-map-list i.fa-arrow-left
 {
-  font-weight: bold;
-  font-size: 2em;
+  margin-right: .5em;
 }
 div.map-sprites
 {
@@ -346,9 +346,6 @@ div.map-sprites
   align-items: center;
   border-left: black solid 1px;
   overflow-y: scroll;
-}
-div.sprites-container
-{
 }
 div.sprite-block
 {
