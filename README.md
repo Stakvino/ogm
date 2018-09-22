@@ -1,2 +1,2 @@
-# ogm
-2D game creator
+# GMM
+Grid Map Maker

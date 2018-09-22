@@ -140,14 +140,13 @@ div.create-map-block
   width: 100%;
   padding: 2em 0;
 }
-
 button.create-new-map
 {
   color: forestgreen;
 }
 button.create-new-map i.fa-plus
 {
-  margin-right: .2em;
+  margin-right: .4em;
 }
 table.map-list-table canvas.map-small
 {
@@ -378,7 +377,7 @@ div.sprite-block label
 }
 button.add-map-sprite
 {
-  margin: 1em 0;
   min-height: 40px;
   min-width: 110px;
+  margin: 1em 0;
 }
